@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}{{ preparacion.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">{{ preparacion.nombre }}</h1>
+        <p class="subtitulo">{{ preparacion.fecha|date:"d/m/Y" }}, registrada por {{ preparacion.usuario.get_full_name|default:preparacion.usuario.username }}.</p>
+    </div>
+    <div class="encabezado__acciones">
+        <a href="{% url 'produccion:lista' %}" class="boton boton--secundario">Volver a producción</a>
+    </div>
+</div>
+
+{% if preparacion.esta_anulada %}
+<div class="aviso aviso--alerta estado-venta">
+    <p><strong>Producción anulada</strong> el {{ preparacion.fecha_anulacion|date:"d/m/Y h:i a" }}
+        por {{ preparacion.anulada_por.get_full_name|default:preparacion.anulada_por.username }}. Motivo: {{ preparacion.motivo_anulacion }}</p>
+</div>
+{% endif %}
+
+<dl class="datos">
+    <div><dt>Resultado</dt><dd>{% include "produccion/resultado.html" %}</dd></div>
+    {% if preparacion.producto %}<div><dt>Producto relacionado</dt><dd>{{ preparacion.producto.nombre }}</dd></div>{% endif %}
+    {% if preparacion.observaciones %}<div><dt>Observaciones</dt><dd>{{ preparacion.observaciones }}</dd></div>{% endif %}
+</dl>
+
+<h2 class="titulo-seccion">Insumos usados</h2>
+{% if consumos %}
+<table class="tabla tabla-detalle">
+    <thead><tr><th>Insumo</th><th class="numero">Cantidad</th></tr></thead>
+    <tbody>
+        {% for consumo in consumos %}
+        <tr>
+            <td data-titulo="Insumo"><strong>{{ consumo.insumo.nombre }}</strong></td>
+            <td data-titulo="Cantidad" class="numero">{{ consumo.cantidad|cantidad }} {{ consumo.insumo.unidad_medida }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="texto-suave">No se registraron insumos para esta preparación.</p>
+{% endif %}
+
+{% if formulario_anulacion %}
+<details class="anular">
+    <summary>Anular esta producción</summary>
+    <div class="panel-formulario">
+        <p class="nota">El registro no se borra: queda marcado como anulado y los insumos usados vuelven al inventario.</p>
+        <form method="post" action="{% url 'produccion:anular' preparacion.pk %}" class="formulario" data-un-envio
+              data-confirmar="¿Anular la producción «{{ preparacion.nombre }}»?">
+            {% csrf_token %}
+            {% for campo in formulario_anulacion %}{% include "componentes/campo.html" %}{% endfor %}
+            <div class="acciones-formulario">
+                <button type="submit" class="boton boton--peligro" data-texto-enviando="Anulando…">Anular producción</button>
+            </div>
+        </form>
+    </div>
+</details>
+{% endif %}
+{% endblock %}

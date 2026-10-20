@@ -12,6 +12,7 @@
 
     <form method="post" class="formulario" data-un-envio novalidate>
         {% csrf_token %}
+        {% if codigo_operacion %}<input type="hidden" name="codigo_operacion" value="{{ codigo_operacion }}">{% endif %}
         {% for campo in formulario %}
             {% include "componentes/campo.html" %}
         {% endfor %}
@@ -25,5 +26,5 @@
 {% endblock %}
 
 {% block scripts %}
-{% if script %}<script src="{% static script %}"></script>{% endif %}
+{% if script %}<script src="{% static script %}?v={{ version_estilos }}"></script>{% endif %}
 {% endblock %}

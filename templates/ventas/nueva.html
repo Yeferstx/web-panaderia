@@ -3,7 +3,7 @@
 
 {% block titulo %}Registrar venta{% endblock %}
 
-{% block estilos %}<link rel="stylesheet" href="{% static 'css/ventas.css' %}">{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/ventas.css' %}?v={{ version_estilos }}">{% endblock %}
 
 {% block contenido %}
 <div class="encabezado">
@@ -102,4 +102,4 @@
 {{ lineas_enviadas|json_script:"datos-lineas" }}
 {% endblock %}
 
-{% block scripts %}<script src="{% static 'js/ventas.js' %}"></script>{% endblock %}
+{% block scripts %}<script src="{% static 'js/ventas.js' %}?v={{ version_estilos }}"></script>{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Caja{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">Caja {% if es_hoy %}de hoy{% else %}del {{ fecha|date:"j/m/Y" }}{% endif %}</h1>
+        <p class="subtitulo">{{ fecha|date:"l j \d\e F \d\e Y"|lower }}</p>
+    </div>
+    <form method="get" class="encabezado__acciones">
+        <input type="date" name="fecha" value="{{ fecha|date:'Y-m-d' }}" aria-label="Fecha de la caja" class="campo-fecha">
+        <button type="submit" class="boton boton--secundario">Ver otro día</button>
+    </form>
+</div>
+
+{% if cierre %}
+<div class="aviso {% if cierre.diferencia %}aviso--alerta{% endif %} estado-venta">
+    <p>
+        <strong>Caja cerrada</strong> por {{ cierre.usuario.get_full_name|default:cierre.usuario.username }}
+        el {{ cierre.creado_en|date:"d/m/Y h:i a" }}.
+        {% if cierre.diferencia == 0 %}El efectivo contado coincidió con el esperado.
+        {% elif cierre.diferencia > 0 %}Sobraron {{ cierre.diferencia|pesos }}.
+        {% else %}Faltaron {{ cierre.diferencia|pesos|slice:"1:" }}.{% endif %}
+    </p>
+</div>
+{% if hay_cambios %}
+<div class="aviso aviso--alerta estado-venta">
+    <p>Después del cierre se registraron o anularon movimientos de ese día. Hoy el efectivo esperado sería
+        {{ resumen.efectivo_esperado|pesos }}, no {{ cierre.efectivo_esperado|pesos }}. El cierre guardado no cambia.</p>
+</div>
+{% endif %}
+{% endif %}
+
+<section class="panel-formulario panel-formulario--ancho caja">
+    <h2 class="titulo-seccion">Efectivo</h2>
+    <table class="tabla-caja">
+        <tbody>
+            <tr><td>Efectivo con el que abrió</td><td class="numero">{% if cierre %}{{ cierre.saldo_inicial|pesos }}{% else %}{{ resumen.saldo_inicial|pesos }}{% endif %}</td></tr>
+            <tr><td>Ventas en efectivo</td><td class="numero texto-entrada">+ {{ resumen.ventas_efectivo|pesos }}</td></tr>
+            <tr><td>Otras entradas de dinero</td><td class="numero texto-entrada">+ {{ resumen.entradas|pesos }}</td></tr>
+            <tr><td>Gastos pagados en efectivo</td><td class="numero texto-salida">− {{ resumen.gastos_efectivo|pesos }}</td></tr>
+            <tr><td>Compras pagadas en efectivo</td><td class="numero texto-salida">− {{ resumen.compras_efectivo|pesos }}</td></tr>
+            <tr><td>Otras salidas de dinero</td><td class="numero texto-salida">− {{ resumen.salidas|pesos }}</td></tr>
+            <tr class="tabla-caja__total">
+                <td>Debería haber en caja</td>
+                <td class="numero">{% if cierre %}{{ cierre.efectivo_esperado|pesos }}{% else %}{{ resumen.efectivo_esperado|pesos }}{% endif %}</td>
+            </tr>
+            {% if cierre %}
+            <tr><td>Efectivo contado</td><td class="numero"><strong>{{ cierre.efectivo_contado|pesos }}</strong></td></tr>
+            <tr><td>Diferencia</td><td class="numero"><strong>{{ cierre.diferencia|pesos }}</strong></td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <h3 class="titulo-seccion titulo-seccion--pequeno">Por otros medios (no entran a la caja)</h3>
+    <table class="tabla-caja">
+        <tbody>
+            <tr><td>Ventas por transferencia u otros</td><td class="numero">{{ resumen.ventas_otros_medios|pesos }}</td></tr>
+            <tr><td>Gastos pagados por otros medios</td><td class="numero">{{ resumen.gastos_otros_medios|pesos }}</td></tr>
+            <tr><td>Compras pagadas por otros medios</td><td class="numero">{{ resumen.compras_otros_medios|pesos }}</td></tr>
+        </tbody>
+    </table>
+    {% if resumen.efectivo_esperado < 0 and not cierre %}
+    <p class="mensaje mensaje--warning">El efectivo esperado da negativo. Revise si falta escribir el efectivo con el que abrió la caja, alguna venta en efectivo o una entrada de dinero.</p>
+    {% endif %}
+    <p class="texto-suave">Las compras pendientes de pago no restan hasta que se paguen.</p>
+</section>
+
+{% if formulario_cierre and not es_futura %}
+<section class="panel-formulario">
+    <h2 class="titulo-seccion">Cerrar la caja</h2>
+    <form method="post" action="{% url 'gastos:cerrar_caja' %}" class="formulario" data-un-envio
+          data-confirmar="¿Cerrar la caja de este día? Después no se podrá modificar el cierre.">
+        {% csrf_token %}
+        <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+        {% for campo in formulario_cierre %}{% include "componentes/campo.html" %}{% endfor %}
+        <div class="acciones-formulario">
+            <button type="submit" class="boton boton--principal" data-texto-enviando="Cerrando…">Cerrar caja</button>
+        </div>
+    </form>
+</section>
+{% endif %}
+
+<section class="seccion seccion--caja">
+    <h2 class="titulo-seccion">Otras entradas y salidas de dinero</h2>
+    <p class="texto-suave">Por ejemplo, cuando el dueño saca dinero de la caja o agrega sencillo para dar cambio.</p>
+
+    {% if movimientos %}
+    <table class="tabla">
+        <thead><tr><th>Motivo</th><th>Tipo</th><th class="numero">Valor</th><th>Registró</th></tr></thead>
+        <tbody>
+            {% for movimiento in movimientos %}
+            <tr>
+                <td data-titulo="Motivo"><strong>{{ movimiento.motivo }}</strong></td>
+                <td data-titulo="Tipo">{{ movimiento.get_tipo_display }}</td>
+                <td data-titulo="Valor" class="numero">{{ movimiento.valor|pesos }}</td>
+                <td data-titulo="Registró">{{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if formulario_movimiento and not es_futura %}
+    <div class="panel-formulario">
+        <form method="post" action="{% url 'gastos:movimiento_caja' %}" class="formulario" data-un-envio>
+            {% csrf_token %}
+            <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+            {% for campo in formulario_movimiento %}{% include "componentes/campo.html" %}{% endfor %}
+            <div class="acciones-formulario">
+                <button type="submit" class="boton boton--secundario" data-texto-enviando="Guardando…">Registrar movimiento</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

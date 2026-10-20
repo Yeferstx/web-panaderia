@@ -1,0 +1,6 @@
+{% load formato %}{% spaceless %}
+{% if preparacion.bandejas %}{{ preparacion.bandejas|cantidad }} bandeja{{ preparacion.bandejas|pluralize }}{% endif %}
+{% if preparacion.bandejas and preparacion.unidades_aproximadas or preparacion.bandejas and preparacion.unidades_minimas %}, {% endif %}
+{% if preparacion.unidades_aproximadas %}unas {{ preparacion.unidades_aproximadas }} unidades (aprox.){% elif preparacion.unidades_minimas %}entre {{ preparacion.unidades_minimas }} y {{ preparacion.unidades_maximas }} unidades (aprox.){% endif %}
+{% if not preparacion.bandejas and not preparacion.unidades_aproximadas and not preparacion.unidades_minimas %}<span class="texto-suave">Sin resultado registrado</span>{% endif %}
+{% endspaceless %}

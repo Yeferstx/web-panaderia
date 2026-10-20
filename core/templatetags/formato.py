@@ -9,7 +9,10 @@ register = template.Library()
 def pesos(valor):
     if valor is None or valor == "":
         return ""
-    texto = f"{Decimal(valor):,.0f}".replace(",", ".")
+    numero = Decimal(valor)
+    texto = f"{abs(numero):,.0f}".replace(",", ".")
+    if numero < 0:
+        return f"-${texto}"
     return f"${texto}"
 
 

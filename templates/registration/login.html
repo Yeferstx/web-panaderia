@@ -3,40 +3,65 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ingresar · {{ nombre_negocio }}</title>
+    <title>Ingresar · Panadería {{ nombre_negocio }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v={{ version_estilos }}">
+    <link rel="stylesheet" href="{% static 'css/formularios.css' %}?v={{ version_estilos }}">
+    <link rel="stylesheet" href="{% static 'css/ingreso.css' %}?v={{ version_estilos }}">
 </head>
-<body class="pagina-ingreso">
-    <main class="ingreso">
-        <h1 class="ingreso__negocio">{{ nombre_negocio }}</h1>
-        <p class="ingreso__texto">Ingrese con su usuario para registrar las cuentas del día.</p>
-
-        {% if form.non_field_errors %}
-        <p class="mensaje mensaje--error" role="alert">Usuario o contraseña incorrectos. Revise los datos e intente de nuevo.</p>
-        {% endif %}
-
-        <form method="post" class="formulario" data-un-envio>
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next }}">
-
-            <div class="campo">
-                <label for="id_username">Usuario</label>
-                <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" autocomplete="username" autocapitalize="none" required autofocus>
+<body>
+    <div class="acceso">
+        <section class="acceso__marca">
+            <div class="acceso__ilustracion">
+                <svg viewBox="0 0 400 380" role="img" aria-label="Panadería {{ nombre_negocio }}">
+                    <defs>
+                        <path id="arco-nombre" d="M 26 190 A 205 205 0 0 1 374 190"/>
+                    </defs>
+                    <image href="{% static 'img/panadero.webp' %}" x="60" y="96" width="280" height="280"/>
+                    <text class="acceso__arco"><textPath href="#arco-nombre" startOffset="50%" text-anchor="middle">{{ nombre_negocio|upper }}</textPath></text>
+                </svg>
             </div>
 
-            <div class="campo">
-                <label for="id_password">Contraseña</label>
-                <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+            <p class="acceso__lema">Ventas, inventario y caja del día en un solo lugar.</p>
+        </section>
+
+        <main class="acceso__panel">
+            <div class="acceso__tarjeta">
+                <h1 class="acceso__titulo">Bienvenido</h1>
+                <p class="acceso__texto">Ingrese con su usuario y contraseña.</p>
+
+                {% if form.non_field_errors %}
+                <p class="mensaje mensaje--error" role="alert">Usuario o contraseña incorrectos. Revise los datos e intente de nuevo.</p>
+                {% endif %}
+
+                <form method="post" class="formulario" data-un-envio>
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+
+                    <div class="campo">
+                        <label for="id_username">Usuario</label>
+                        <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" autocomplete="username" autocapitalize="none" required autofocus>
+                    </div>
+
+                    <div class="campo">
+                        <label for="id_password">Contraseña</label>
+                        <div class="campo-clave">
+                            <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+                            <button type="button" class="campo-clave__ver" id="ver-clave" aria-controls="id_password">Mostrar</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="boton boton--principal boton--ancho boton--grande" data-texto-enviando="Ingresando…">Ingresar</button>
+                </form>
+
+                <p class="acceso__ayuda">¿Olvidó su contraseña? Pídale al administrador que se la cambie.</p>
             </div>
+        </main>
+    </div>
 
-            <button type="submit" class="boton boton--principal boton--ancho" data-texto-enviando="Ingresando…">Ingresar</button>
-        </form>
-    </main>
-
-    <script src="{% static 'js/formularios.js' %}"></script>
+    <script src="{% static 'js/formularios.js' %}?v={{ version_estilos }}"></script>
+    <script src="{% static 'js/ingreso.js' %}?v={{ version_estilos }}"></script>
 </body>
 </html>

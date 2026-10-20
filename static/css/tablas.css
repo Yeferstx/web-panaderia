@@ -1,24 +1,27 @@
 .tabla {
     width: 100%;
-    border-collapse: collapse;
-    background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-radius: var(--radio);
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--papel);
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-grande);
     overflow: hidden;
 }
 
 .tabla th,
 .tabla td {
-    padding: 0.7rem 0.9rem;
+    padding: 14px 16px;
     text-align: left;
     vertical-align: middle;
-    border-bottom: 1px solid var(--linea);
+    border-bottom: 2px solid var(--linea);
 }
 
 .tabla th {
-    background: #f4f0ea;
-    font-size: 0.875rem;
-    color: var(--texto-suave);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.053em;
+    text-transform: uppercase;
+    color: var(--gris);
 }
 
 .tabla tbody tr:last-child td {
@@ -27,6 +30,7 @@
 
 .tabla td strong {
     display: block;
+    font-weight: 800;
 }
 
 .tabla .numero {
@@ -35,14 +39,14 @@
 }
 
 .fila--inactiva {
-    color: var(--texto-suave);
+    color: var(--gris);
 }
 
 .acciones-fila {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 0.4rem;
+    gap: 8px;
 }
 
 .acciones-fila form {
@@ -51,47 +55,55 @@
 
 .etiqueta {
     display: inline-block;
-    padding: 0.15rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    background: #efebe6;
-    color: var(--texto-suave);
+    padding: 3px 10px;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio);
+    background: var(--fondo-suave);
+    color: var(--lapiz);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.053em;
+    text-transform: uppercase;
     white-space: nowrap;
 }
 
 .etiqueta--normal {
-    background: var(--exito-fondo);
+    background: var(--exito-claro);
+    border-color: var(--exito-borde);
     color: var(--exito);
 }
 
 .etiqueta--bajo {
-    background: var(--alerta-fondo);
-    color: var(--alerta);
+    background: var(--ambar-claro);
+    border-color: var(--ambar-borde);
+    color: var(--ambar);
 }
 
 .etiqueta--agotado,
 .etiqueta--negativo {
-    background: var(--error-fondo);
-    color: var(--error);
+    background: var(--rojo-claro);
+    border-color: var(--rojo-borde);
+    color: var(--rojo);
 }
 
 .texto-entrada {
     color: var(--exito);
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .texto-salida {
-    color: var(--error);
-    font-weight: 700;
+    color: var(--rojo);
+    font-weight: 800;
 }
 
 .paginacion {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 16px;
+    margin-top: 16px;
+    color: var(--lapiz);
+    font-weight: 700;
 }
 
 @media (max-width: 699px) {
@@ -105,6 +117,7 @@
     .tabla {
         border: none;
         background: transparent;
+        overflow: visible;
     }
 
     .tabla thead {
@@ -112,33 +125,33 @@
     }
 
     .tabla tr {
-        margin-bottom: 0.75rem;
-        padding: 0.5rem 0.9rem;
-        background: var(--superficie);
-        border: 1px solid var(--linea);
-        border-radius: var(--radio);
+        margin-bottom: 12px;
+        padding: 10px 16px;
+        background: var(--papel);
+        border: 2px solid var(--linea);
+        border-radius: var(--radio-grande);
     }
 
     .tabla td {
         display: flex;
         justify-content: space-between;
-        gap: 1rem;
-        padding: 0.4rem 0;
+        gap: 16px;
+        padding: 6px 0;
         border-bottom: none;
         text-align: right;
     }
 
     .tabla td[data-titulo]::before {
         content: attr(data-titulo);
-        color: var(--texto-suave);
-        font-size: 0.875rem;
+        color: var(--lapiz);
+        font-size: 14px;
         text-align: left;
     }
 
     .tabla td:first-child {
         display: block;
         text-align: left;
-        padding-top: 0.25rem;
+        padding-top: 4px;
     }
 
     .tabla td:first-child::before {
@@ -147,6 +160,17 @@
 
     .acciones-fila {
         justify-content: flex-start;
-        padding-top: 0.6rem !important;
+        padding-top: 10px !important;
+    }
+}
+
+@media (min-width: 700px) {
+    .acciones-fila {
+        flex-wrap: nowrap;
+    }
+
+    .acciones-fila .boton--pequeno {
+        padding: 0 12px;
+        font-size: 12px;
     }
 }

@@ -1,80 +1,49 @@
 .formulario {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 16px;
 }
 
 .campo {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 6px;
 }
 
 .campo label {
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--tinta);
 }
 
 .campo input,
 .campo select,
-.campo textarea {
-    min-height: 44px;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid #cfc6bb;
+.campo textarea,
+.campo-fecha {
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 2px solid var(--linea);
     border-radius: var(--radio);
-    background: var(--superficie);
-    color: var(--texto);
+    background: var(--fondo-suave);
+    color: var(--tinta);
     font: inherit;
-    font-size: 1rem;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: var(--gris);
+    font-weight: 500;
 }
 
 .campo input:focus,
 .campo select:focus,
-.campo textarea:focus {
-    border-color: var(--corteza);
-    outline: 3px solid rgba(242, 193, 78, 0.6);
-    outline-offset: 0;
-}
-
-.campo__error {
-    color: var(--error);
-    font-size: 0.9rem;
-}
-
-.pagina-ingreso {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 1rem;
-    border-top: 6px solid var(--cafe-tostado);
-}
-
-.ingreso {
-    width: 100%;
-    max-width: 380px;
-    padding: 2rem 1.5rem;
-    background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-radius: 12px;
-}
-
-.ingreso__negocio {
-    font-size: 1.75rem;
-    color: var(--cafe-tostado);
-}
-
-.ingreso__texto {
-    color: var(--texto-suave);
-}
-
-.campo__opcional {
-    font-weight: 400;
-    color: var(--texto-suave);
-}
-
-.campo__ayuda {
-    color: var(--texto-suave);
-    font-size: 0.875rem;
+.campo textarea:focus,
+.campo-fecha:focus {
+    border-color: var(--principal);
+    background: var(--papel);
+    outline: none;
 }
 
 .campo textarea {
@@ -82,41 +51,111 @@
     resize: vertical;
 }
 
+.campo__opcional {
+    font-weight: 600;
+    color: var(--gris);
+}
+
+.campo__ayuda {
+    color: var(--lapiz);
+    font-size: 14px;
+}
+
+.campo__error {
+    margin: 0;
+    color: var(--rojo);
+    font-size: 14px;
+    font-weight: 700;
+}
+
 .campo--oculto {
     display: none;
 }
 
+.pagina-ingreso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.ingreso {
+    width: 100%;
+    max-width: 400px;
+    padding: 32px 24px;
+}
+
+.ingreso__negocio small {
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--letra);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lapiz);
+}
+
+.ingreso__negocio {
+    font-size: 38px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--principal);
+    text-align: center;
+}
+
+.ingreso__texto {
+    color: var(--lapiz);
+    text-align: center;
+    margin-bottom: 24px;
+}
+
 .panel-formulario {
     max-width: 560px;
-    padding: 1.5rem;
-    background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-radius: 12px;
+    padding: 24px;
+    background: var(--papel);
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-grande);
+}
+
+.panel-formulario--ancho {
+    max-width: 900px;
+}
+
+.panel-formulario .titulo-seccion {
+    margin-bottom: 12px;
+}
+
+.formulario-ancho {
+    gap: 20px;
 }
 
 .nota {
-    padding-left: 0.75rem;
-    border-left: 3px solid var(--mantequilla);
-    color: var(--texto-suave);
+    padding: 12px 16px;
+    background: var(--acento-claro);
+    border-radius: var(--radio);
+    color: var(--tinta);
+    font-size: 15px;
 }
 
 .acciones-formulario {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 12px;
+    margin-top: 8px;
 }
 
 .filtros {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-    padding: 1rem;
-    background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-radius: var(--radio);
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--papel);
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-grande);
 }
 
 .filtros .campo {
@@ -124,5 +163,147 @@
 }
 
 .filtros label {
-    font-size: 0.875rem;
+    font-size: 13px;
+    color: var(--lapiz);
+    letter-spacing: 0.053em;
+    text-transform: uppercase;
+}
+
+.fila-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.linea-formulario {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    align-items: end;
+    padding: 16px 0;
+    border-bottom: 2px solid var(--linea);
+}
+
+.linea-formulario__unidad {
+    color: var(--lapiz);
+    font-weight: 800;
+}
+
+.linea-formulario__quitar {
+    justify-self: start;
+}
+
+#lineas-compra + template + .boton,
+#lineas-consumo + template + .boton {
+    margin-top: 16px;
+}
+
+.campo--descripcion.campo--oculto {
+    display: block;
+    visibility: hidden;
+}
+
+@media (max-width: 699px) {
+    .campo--descripcion.campo--oculto {
+        display: none;
+    }
+}
+
+@media (min-width: 700px) {
+    .linea-formulario {
+        grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 2.5rem minmax(0, 1.3fr) auto;
+    }
+
+    .linea-formulario > .campo__error {
+        grid-column: 1 / -1;
+    }
+
+    .linea-formulario .linea-formulario__unidad {
+        grid-column: 4;
+        grid-row: 1;
+        padding-bottom: 12px;
+    }
+
+    .linea-formulario .campo--cantidad {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .linea-formulario .campo--valor {
+        grid-column: 5;
+        grid-row: 1;
+    }
+
+    .linea-formulario .linea-formulario__quitar {
+        grid-column: 6;
+        grid-row: 1;
+        margin-bottom: 5px;
+    }
+
+    .linea-formulario--consumo {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+    }
+
+    .linea-formulario--consumo .campo--cantidad {
+        grid-column: 2;
+    }
+
+    .linea-formulario--consumo .linea-formulario__quitar {
+        grid-column: 3;
+    }
+}
+
+.opciones-pago {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0 0 16px;
+    padding: 0;
+    border: none;
+}
+
+.opciones-pago legend {
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.opcion-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.opcion-radio:has(input:checked) {
+    background: var(--acento-claro);
+    border-color: var(--acento);
+    color: var(--principal);
+}
+
+.opcion-radio input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--principal);
+}
+
+.total--compra {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid var(--linea);
+    font-weight: 800;
+}
+
+.total--compra strong {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--tinta);
 }

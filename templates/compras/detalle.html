@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Compra #{{ compra.pk }}{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">Compra #{{ compra.pk }}</h1>
+        <p class="subtitulo">
+            {{ compra.fecha|date:"d/m/Y" }}, {{ compra.proveedor.nombre|default:"sin proveedor" }}.
+            Registrada por {{ compra.usuario.get_full_name|default:compra.usuario.username }}.
+        </p>
+    </div>
+    <div class="encabezado__acciones">
+        <a href="{% url 'compras:lista' %}" class="boton boton--secundario">Volver a compras</a>
+    </div>
+</div>
+
+{% if compra.esta_anulada %}
+<div class="aviso aviso--alerta estado-venta">
+    <p><strong>Compra anulada</strong> el {{ compra.fecha_anulacion|date:"d/m/Y h:i a" }}
+        por {{ compra.anulada_por.get_full_name|default:compra.anulada_por.username }}. Motivo: {{ compra.motivo_anulacion }}</p>
+</div>
+{% elif compra.esta_pendiente %}
+<div class="aviso aviso--alerta estado-venta"><p><strong>Pendiente de pago.</strong> Esta compra todavía no se ha pagado al proveedor.</p></div>
+{% else %}
+<p>Pagada el {{ compra.fecha_pago|date:"d/m/Y" }} por {{ compra.get_metodo_pago_display|lower }}.</p>
+{% endif %}
+
+<table class="tabla tabla-detalle">
+    <thead>
+        <tr>
+            <th>Artículo</th>
+            <th>Tipo</th>
+            <th class="numero">Cantidad</th>
+            <th class="numero">Costo unitario</th>
+            <th class="numero">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in detalles %}
+        <tr>
+            <td data-titulo="Artículo"><strong>{{ detalle.descripcion }}</strong></td>
+            <td data-titulo="Tipo">{{ detalle.get_tipo_display }}</td>
+            <td data-titulo="Cantidad" class="numero">{{ detalle.cantidad|cantidad }} {{ detalle.unidad_medida }}</td>
+            <td data-titulo="Costo unitario" class="numero">{{ detalle.costo_unitario|pesos }}</td>
+            <td data-titulo="Subtotal" class="numero">{{ detalle.subtotal|pesos }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="resumen-ventas">
+    <div>
+        <span class="texto-suave">Total</span>
+        <strong>{{ compra.total|pesos }}</strong>
+    </div>
+</div>
+
+{% if compra.observaciones %}<p><strong>Nota:</strong> {{ compra.observaciones }}</p>{% endif %}
+
+{% if formulario_pago %}
+<section class="panel-formulario">
+    <h2 class="titulo-seccion">Registrar el pago</h2>
+    <form method="post" action="{% url 'compras:pagar' compra.pk %}" class="formulario" data-un-envio
+          data-confirmar="¿Marcar la compra #{{ compra.pk }} como pagada?">
+        {% csrf_token %}
+        {% for campo in formulario_pago %}{% include "componentes/campo.html" %}{% endfor %}
+        <div class="acciones-formulario">
+            <button type="submit" class="boton boton--principal" data-texto-enviando="Guardando…">Marcar como pagada</button>
+        </div>
+    </form>
+</section>
+{% endif %}
+
+{% if formulario_anulacion %}
+<details class="anular">
+    <summary>Anular esta compra</summary>
+    <div class="panel-formulario">
+        <p class="nota">La compra no se borra: queda marcada como anulada y lo que había sumado al inventario se descuenta.</p>
+        <form method="post" action="{% url 'compras:anular' compra.pk %}" class="formulario" data-un-envio
+              data-confirmar="¿Anular la compra #{{ compra.pk }} por {{ compra.total|pesos }}? Esta acción no se puede deshacer.">
+            {% csrf_token %}
+            {% for campo in formulario_anulacion %}{% include "componentes/campo.html" %}{% endfor %}
+            <div class="acciones-formulario">
+                <button type="submit" class="boton boton--peligro" data-texto-enviando="Anulando…">Anular compra</button>
+            </div>
+        </form>
+    </div>
+</details>
+{% endif %}
+{% endblock %}

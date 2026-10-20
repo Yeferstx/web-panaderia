@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block titulo %}Inicio{% endblock %} · {{ nombre_negocio }}</title>
+    <title>{% block titulo %}Inicio{% endblock %} · Panadería {{ nombre_negocio }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/formularios.css' %}">
-    <link rel="stylesheet" href="{% static 'css/tarjetas.css' %}">
-    <link rel="stylesheet" href="{% static 'css/tablas.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v={{ version_estilos }}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v={{ version_estilos }}">
+    <link rel="stylesheet" href="{% static 'css/formularios.css' %}?v={{ version_estilos }}">
+    <link rel="stylesheet" href="{% static 'css/tarjetas.css' %}?v={{ version_estilos }}">
+    <link rel="stylesheet" href="{% static 'css/tablas.css' %}?v={{ version_estilos }}">
     {% block estilos %}{% endblock %}
 </head>
 <body>
@@ -24,8 +24,8 @@
         </main>
     </div>
 
-    <script src="{% static 'js/menu.js' %}"></script>
-    <script src="{% static 'js/formularios.js' %}"></script>
+    <script src="{% static 'js/menu.js' %}?v={{ version_estilos }}"></script>
+    <script src="{% static 'js/formularios.js' %}?v={{ version_estilos }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

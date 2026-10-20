@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Registrar compra{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Registrar compra</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'compras:lista' %}" class="boton boton--secundario">Ver compras</a>
+    </div>
+</div>
+
+{% include "componentes/errores_formulario.html" %}
+{% if lineas.non_form_errors %}
+<div class="mensaje mensaje--error" role="alert">
+    {% for error in lineas.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<form method="post" class="formulario formulario-ancho" data-un-envio novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="codigo_operacion" value="{{ codigo_operacion }}">
+
+    <section class="panel-formulario panel-formulario--ancho">
+        <h2 class="titulo-seccion">Datos de la compra</h2>
+        <div class="fila-campos">
+            {% include "componentes/campo.html" with campo=formulario.fecha %}
+            {% include "componentes/campo.html" with campo=formulario.proveedor %}
+        </div>
+        <p class="texto-suave"><a href="{% url 'compras:proveedor_nuevo' %}">Crear un proveedor nuevo</a></p>
+    </section>
+
+    <section class="panel-formulario panel-formulario--ancho">
+        <h2 class="titulo-seccion">¿Qué se compró?</h2>
+        <p class="texto-suave">Escriba la cantidad y lo que se pagó por cada artículo. Las bebidas y los insumos se suman al inventario.</p>
+
+        {{ lineas.management_form }}
+        <div id="lineas-compra" data-prefijo="lineas">
+            {% for linea in lineas %}
+            <div class="linea-formulario">
+                {% for campo in linea %}{% include "componentes/campo_compacto.html" %}{% endfor %}
+                <span class="linea-formulario__unidad"></span>
+                <button type="button" class="boton boton--secundario boton--pequeno linea-formulario__quitar">Quitar</button>
+                {% for error in linea.non_field_errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <template id="plantilla-linea">
+            <div class="linea-formulario">
+                {% for campo in lineas.empty_form %}{% include "componentes/campo_compacto.html" %}{% endfor %}
+                <span class="linea-formulario__unidad"></span>
+                <button type="button" class="boton boton--secundario boton--pequeno linea-formulario__quitar">Quitar</button>
+            </div>
+        </template>
+
+        <button type="button" class="boton boton--secundario" id="agregar-linea">Agregar otro artículo</button>
+
+        <div class="total total--compra">
+            <span>Total de la compra</span>
+            <strong id="total-compra">$0</strong>
+        </div>
+    </section>
+
+    <section class="panel-formulario panel-formulario--ancho">
+        <h2 class="titulo-seccion">Pago</h2>
+        <fieldset class="opciones-pago">
+            <legend>{{ formulario.estado_pago.label }}</legend>
+            {% for opcion in formulario.estado_pago %}
+            <label class="opcion-radio">{{ opcion.tag }} {{ opcion.choice_label }}</label>
+            {% endfor %}
+        </fieldset>
+        <div id="campo-metodo-pago">{% include "componentes/campo.html" with campo=formulario.metodo_pago %}</div>
+        {% include "componentes/campo.html" with campo=formulario.observaciones %}
+    </section>
+
+    <div class="acciones-formulario">
+        <button type="submit" class="boton boton--principal boton--grande" data-texto-enviando="Guardando…">Guardar compra</button>
+        <a href="{% url 'compras:lista' %}" class="boton boton--secundario boton--grande">Cancelar</a>
+    </div>
+</form>
+
+{{ unidades|json_script:"datos-unidades" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/lineas.js' %}?v={{ version_estilos }}"></script>
+<script src="{% static 'js/compras.js' %}?v={{ version_estilos }}"></script>
+{% endblock %}

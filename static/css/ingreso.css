@@ -1,0 +1,140 @@
+.acceso {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+}
+
+.acceso__marca {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 24px 28px;
+    background: #f8f3e9;
+}
+
+.acceso__ilustracion {
+    width: 100%;
+    max-width: 260px;
+    align-self: center;
+}
+
+.acceso__ilustracion svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.acceso__arco {
+    fill: var(--principal);
+    font-family: var(--letra-titulos);
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.acceso__lema {
+    margin: 0 auto;
+    color: var(--lapiz);
+    font-size: 15px;
+    text-align: center;
+}
+
+.acceso__panel {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px 48px;
+}
+
+.acceso__tarjeta {
+    width: 100%;
+    max-width: 420px;
+    padding: 28px 24px;
+    background: var(--papel);
+    border: 2px solid var(--linea);
+    border-radius: 20px;
+}
+
+.acceso__titulo {
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.acceso__texto {
+    color: var(--lapiz);
+    margin-bottom: 24px;
+}
+
+.acceso__ayuda {
+    margin: 20px 0 0;
+    font-size: 14px;
+    color: var(--lapiz);
+    text-align: center;
+}
+
+.campo-clave {
+    position: relative;
+}
+
+.campo-clave input {
+    width: 100%;
+    padding-right: 96px;
+}
+
+.campo-clave__ver {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    min-height: 36px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--principal);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.campo-clave__ver:hover {
+    background: var(--acento-claro);
+}
+
+@media (min-width: 900px) {
+    .acceso {
+        grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+        align-content: stretch;
+    }
+
+    .acceso__marca {
+        justify-content: center;
+        gap: 32px;
+        padding: 48px;
+    }
+
+    .acceso__ilustracion {
+        max-width: 460px;
+    }
+
+    .acceso__lema {
+        font-size: 18px;
+        max-width: 30ch;
+    }
+
+    .acceso__panel {
+        align-items: center;
+        padding: 48px;
+        background: var(--menu-fondo);
+    }
+
+    .acceso__tarjeta {
+        border-color: transparent;
+    }
+
+    .acceso__tarjeta {
+        padding: 40px 36px;
+    }
+}

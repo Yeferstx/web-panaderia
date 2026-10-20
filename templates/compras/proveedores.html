@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block titulo %}Proveedores{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Proveedores</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'compras:lista' %}" class="boton boton--secundario">Ver compras</a>
+        <a href="{% url 'compras:proveedor_nuevo' %}" class="boton boton--principal">Nuevo proveedor</a>
+    </div>
+</div>
+
+{% if proveedores %}
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Proveedor</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th><span class="solo-lector">Acciones</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for proveedor in proveedores %}
+        <tr class="{% if not proveedor.activo %}fila--inactiva{% endif %}">
+            <td data-titulo="Proveedor"><strong>{{ proveedor.nombre }}</strong></td>
+            <td data-titulo="Teléfono">{{ proveedor.telefono|default:"—" }}</td>
+            <td data-titulo="Estado">
+                {% if proveedor.activo %}<span class="etiqueta etiqueta--normal">Activo</span>{% else %}<span class="etiqueta">Inactivo</span>{% endif %}
+            </td>
+            <td class="acciones-fila">
+                <a href="{% url 'compras:proveedor_editar' proveedor.pk %}" class="boton boton--pequeno boton--secundario">Editar</a>
+                <form method="post" action="{% url 'compras:proveedor_estado' proveedor.pk %}"
+                      data-confirmar="{% if proveedor.activo %}¿Desactivar a «{{ proveedor.nombre }}»? Sus compras anteriores se conservan.{% else %}¿Activar a «{{ proveedor.nombre }}»?{% endif %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--pequeno boton--secundario">{% if proveedor.activo %}Desactivar{% else %}Activar{% endif %}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="vacio">
+    <p>Todavía no hay proveedores. Registrarlos es opcional: una compra se puede guardar sin proveedor.</p>
+    <a href="{% url 'compras:proveedor_nuevo' %}" class="boton boton--principal">Crear proveedor</a>
+</div>
+{% endif %}
+{% endblock %}

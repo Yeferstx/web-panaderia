@@ -8,7 +8,7 @@
     <div>
         <h1 class="titulo-pagina">{% if es_administrador %}Ventas{% else %}Mis ventas de hoy{% endif %}</h1>
         <p class="subtitulo">
-            {% if desde == hasta %}{{ desde|date:"l j \d\e F \d\e Y" }}{% else %}Del {{ desde|date:"j/m/Y" }} al {{ hasta|date:"j/m/Y" }}{% endif %}
+            {% if desde == hasta %}{{ desde|date:"l j \d\e F \d\e Y"|lower }}{% else %}Del {{ desde|date:"j/m/Y" }} al {{ hasta|date:"j/m/Y" }}{% endif %}
         </p>
     </div>
     <div class="encabezado__acciones">

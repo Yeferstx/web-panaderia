@@ -64,5 +64,5 @@ class FiltroMovimientosForm(forms.Form):
         required=False,
         choices=[("", "Todos los tipos")] + MovimientoInventario.TIPOS,
     )
-    desde = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
-    hasta = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    desde = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"))
+    hasta = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"))

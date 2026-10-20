@@ -1,5 +1,9 @@
 # Decisiones del proyecto
 
+## Negocio
+
+- Nombre: **Panadería Rico Pan de Samuelito**. Está en `NOMBRE_NEGOCIO` dentro de `config/settings.py`.
+
 ## Tecnología
 
 - Django 5.2 LTS (soporte hasta abril de 2028), Python 3.13, PostgreSQL con psycopg 3.
@@ -34,6 +38,54 @@
 - Si una bebida no tiene existencias suficientes, la venta se guarda y se muestra una advertencia (decisión 4).
 - Solo el administrador anula ventas. La anulación exige un motivo, no borra la venta y devuelve las bebidas al inventario una sola vez.
 - El empleado solo ve sus propias ventas del día.
+
+## Compras (Fase 5)
+
+- Una compra puede tener varias líneas de tres tipos: producto para la venta (bebidas), insumo de producción, o materiales y otros (texto libre, no afecta el inventario).
+- Por cada línea se escribe la cantidad y el valor pagado. El sistema calcula el costo unitario.
+- Una compra puede quedar **pendiente de pago**: suma al inventario desde que se registra, pero no resta en la caja hasta que se marque como pagada.
+- Anular una compra descuenta del inventario lo que había sumado, una sola vez, sin borrar el registro.
+
+## Gastos y caja (Fase 5)
+
+- Los gastos son pagos generales (servicios, arriendo, transporte, mantenimiento). Las compras de artículos **no** se registran como gastos, para no contarlas dos veces.
+- Efectivo esperado = efectivo al abrir + ventas en efectivo + otras entradas − gastos en efectivo − compras pagadas en efectivo − otras salidas.
+- Las transferencias se muestran aparte, porque no entran a la caja física.
+- El efectivo al abrir se sugiere con lo contado en el cierre anterior.
+- Solo hay un cierre por día y no se modifica. Si después se registran movimientos de ese día, la pantalla avisa de la diferencia sin cambiar el cierre guardado.
+- Si el efectivo esperado da negativo, se avisa que probablemente falta registrar algo.
+
+## Producción (Fase 5)
+
+- El empleado y el administrador pueden registrar producción. Solo el administrador anula.
+- Ningún dato del resultado es obligatorio: bandejas, unidades aproximadas o un intervalo (desde–hasta). Se muestran siempre como «aprox.».
+- Los insumos usados son opcionales y se descuentan del inventario. Si un insumo se repite en la misma preparación, se suma.
+- La venta de pan **no** descuenta insumos: solo lo hace el registro de producción.
+
+## Informes (Fase 6)
+
+- Tres tipos de informe: diario, semanal (de lunes a domingo) y mensual, con botones para ir al período anterior y al siguiente. Solo los ve el administrador.
+- Las fechas se calculan con la hora de Colombia. Las ventas y gastos anulados no se cuentan.
+- Se separan tres ideas que no son lo mismo:
+  - **Ventas:** lo que se vendió.
+  - **Flujo de caja:** el dinero que realmente entró y salió (ventas cobradas, gastos pagados, compras pagadas por su fecha de pago, entradas y retiros de caja).
+  - **Resultado preliminar:** ventas − costo de las bebidas vendidas − costo de los insumos usados en producción − gastos generales.
+- Los costos usan el precio promedio pagado en las compras registradas. Para insumos sin compras se usa el costo de referencia.
+- El resultado siempre se muestra como **preliminar** y lista lo que falta para que sea exacto (por ejemplo, bebidas sin compras registradas o producción sin insumos).
+- Las compras nunca se suman como gastos.
+- El panel de inicio muestra datos reales: ventas y gastos de hoy, compras del mes y pendientes, alertas de inventario, ventas de la semana y últimas ventas. El empleado solo ve sus ventas del día y la producción del día.
+
+## Diseño visual
+
+- Paleta «Tinta y durazno», elegida por el propietario entre tres opciones:
+  - Menú lateral azul tinta `#1f2a37`, con la opción activa en durazno claro `#f4b08a`.
+  - Color principal durazno horneado `#b5551f` para el botón principal, los precios y el total de la venta.
+  - Fondo crema muy claro `#f9f7f4` y tarjetas blancas.
+- Bordes de 2px, esquinas redondeadas de 12px, sin sombras ni degradados.
+- Tipografías: Poppins para títulos y totales, Nunito Sans para el texto.
+- Verde, rojo y ámbar solo para estados (normal, error, advertencia).
+- Los colores están en variables con nombres genéricos (`--principal`, `--acento`, `--menu-fondo`…) en `static/css/base.css`. Para cambiar de paleta solo se cambian los valores.
+- `VERSION_ESTILOS` en `config/settings.py` se agrega a los enlaces de CSS y JS. Al cambiar los estilos se aumenta ese número para que el navegador no use una copia vieja.
 
 ## Reglas generales
 

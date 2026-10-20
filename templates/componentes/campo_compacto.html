@@ -1,0 +1,5 @@
+<div class="campo campo--{{ campo.name }}">
+    <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+    {{ campo }}
+    {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+</div>

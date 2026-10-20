@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block titulo %}Categorías de gasto{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Categorías de gasto</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'gastos:lista' %}" class="boton boton--secundario">Volver a gastos</a>
+    </div>
+</div>
+
+<form method="post" class="filtros" data-un-envio>
+    {% csrf_token %}
+    <div class="campo">
+        <label for="{{ formulario.nombre.id_for_label }}">Nueva categoría</label>
+        {{ formulario.nombre }}
+        {% for error in formulario.nombre.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+    </div>
+    <button type="submit" class="boton boton--principal" data-texto-enviando="Guardando…">Agregar</button>
+</form>
+
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th><span class="solo-lector">Acciones</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in categorias %}
+        <tr class="{% if not categoria.activa %}fila--inactiva{% endif %}">
+            <td data-titulo="Categoría"><strong>{{ categoria.nombre }}</strong></td>
+            <td data-titulo="Estado">
+                {% if categoria.activa %}<span class="etiqueta etiqueta--normal">Activa</span>{% else %}<span class="etiqueta">Inactiva</span>{% endif %}
+            </td>
+            <td class="acciones-fila">
+                <form method="post" action="{% url 'gastos:categoria_estado' categoria.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--pequeno boton--secundario">{% if categoria.activa %}Desactivar{% else %}Activar{% endif %}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

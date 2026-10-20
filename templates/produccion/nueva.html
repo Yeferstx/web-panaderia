@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Registrar producción{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Registrar producción</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'produccion:lista' %}" class="boton boton--secundario">Ver producción</a>
+    </div>
+</div>
+
+{% include "componentes/errores_formulario.html" %}
+
+<form method="post" class="formulario formulario-ancho" data-un-envio novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="codigo_operacion" value="{{ codigo_operacion }}">
+
+    <section class="panel-formulario panel-formulario--ancho">
+        <h2 class="titulo-seccion">Preparación</h2>
+        <div class="fila-campos">
+            {% include "componentes/campo.html" with campo=formulario.fecha %}
+            {% include "componentes/campo.html" with campo=formulario.nombre %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.producto %}
+    </section>
+
+    <section class="panel-formulario panel-formulario--ancho">
+        <h2 class="titulo-seccion">Insumos usados</h2>
+        <p class="texto-suave">Escriba solo los que sepa. Se descuentan del inventario de insumos. Si no los sabe, deje esta parte vacía.</p>
+
+        {{ consumos.management_form }}
+        {% if hay_insumos %}
+        <div id="lineas-consumo" data-prefijo="consumos">
+            {% for consumo in consumos %}
+            <div class="linea-formulario linea-formulario--consumo">
+                {% for campo in consumo %}{% include "componentes/campo_compacto.html" %}{% endfor %}
+                <button type="button" class="boton boton--secundario boton--pequeno linea-formulario__quitar">Quitar</button>
+                {% for error in consumo.non_field_errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        <template id="plantilla-consumo">
+            <div class="linea-formulario linea-formulario--consumo">
+                {% for campo in consumos.empty_form %}{% include "componentes/campo_compacto.html" %}{% endfor %}
+                <button type="button" class="boton boton--secundario boton--pequeno linea-formulario__quitar">Quitar</button>
+            </div>
+        </template>
+        <button type="button" class="boton boton--secundario" id="agregar-consumo">Agregar otro insumo</button>
+        {% else %}
+        <p class="vacio">Todavía no hay insumos registrados. {% if es_administrador %}<a href="{% url 'inventario:insumo_nuevo' %}">Registrar un insumo</a>{% else %}Pídale al administrador que los registre.{% endif %}</p>
+        {% endif %}
+    </section>
+
+    <section class="panel-formulario panel-formulario--ancho">
+        <h2 class="titulo-seccion">Resultado</h2>
+        <p class="texto-suave">Nada de esto es obligatorio. Escriba lo que sepa: las bandejas, un número aproximado o un intervalo.</p>
+        <div class="fila-campos">
+            {% include "componentes/campo.html" with campo=formulario.bandejas %}
+            {% include "componentes/campo.html" with campo=formulario.unidades_aproximadas %}
+        </div>
+        <p class="texto-suave">O un intervalo de unidades:</p>
+        <div class="fila-campos">
+            {% include "componentes/campo.html" with campo=formulario.unidades_minimas %}
+            {% include "componentes/campo.html" with campo=formulario.unidades_maximas %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.observaciones %}
+    </section>
+
+    <div class="acciones-formulario">
+        <button type="submit" class="boton boton--principal boton--grande" data-texto-enviando="Guardando…">Guardar producción</button>
+        <a href="{% url 'produccion:lista' %}" class="boton boton--secundario boton--grande">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+{% if hay_insumos %}
+<script src="{% static 'js/lineas.js' %}?v={{ version_estilos }}"></script>
+<script>prepararLineas("lineas-consumo", "plantilla-consumo", "agregar-consumo", function () {});</script>
+{% endif %}
+{% endblock %}

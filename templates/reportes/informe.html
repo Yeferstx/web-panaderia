@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load static formato %}
+
+{% block titulo %}Informes{% endblock %}
+
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/reportes.css' %}?v={{ version_estilos }}">{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">{{ titulo }}</h1>
+        <p class="subtitulo">
+            {% if desde == hasta %}{{ desde|date:"l j \d\e F \d\e Y"|lower }}{% else %}Del {{ desde|date:"j \d\e F"|lower }} al {{ hasta|date:"j \d\e F \d\e Y"|lower }}{% endif %}
+        </p>
+    </div>
+    <nav class="pestanas" aria-label="Tipo de informe">
+        {% for clave, nombre in tipos.items %}
+        <a href="?tipo={{ clave }}&fecha={{ fecha|date:'Y-m-d' }}" class="pestana {% if clave == tipo %}pestana--activa{% endif %}">{{ nombre|slice:"8:"|capfirst }}</a>
+        {% endfor %}
+    </nav>
+</div>
+
+<div class="navegacion-periodo">
+    <a href="?tipo={{ tipo }}&fecha={{ anterior|date:'Y-m-d' }}" class="boton boton--secundario boton--pequeno">Anterior</a>
+    <form method="get" class="navegacion-periodo__fecha">
+        <input type="hidden" name="tipo" value="{{ tipo }}">
+        <input type="date" name="fecha" value="{{ fecha|date:'Y-m-d' }}" class="campo-fecha" aria-label="Fecha del informe">
+        <button type="submit" class="boton boton--secundario boton--pequeno">Ver</button>
+    </form>
+    {% if hay_siguiente %}<a href="?tipo={{ tipo }}&fecha={{ siguiente|date:'Y-m-d' }}" class="boton boton--secundario boton--pequeno">Siguiente</a>{% endif %}
+</div>
+
+<section class="indicadores">
+    <div class="indicador">
+        <span class="indicador__nombre">Ventas</span>
+        <strong class="indicador__valor">{{ ventas.total|pesos }}</strong>
+        <span class="indicador__detalle">
+            {{ ventas.cantidad }} venta{{ ventas.cantidad|pluralize }}.
+            {% if diferencia_ventas > 0 %}<span class="texto-entrada">{{ diferencia_ventas|pesos }} más</span> que el período anterior.
+            {% elif diferencia_ventas < 0 %}<span class="texto-salida">{{ diferencia_ventas|pesos|slice:"1:" }} menos</span> que el período anterior.
+            {% else %}Igual que el período anterior.{% endif %}
+        </span>
+    </div>
+    <div class="indicador">
+        <span class="indicador__nombre">Compras</span>
+        <strong class="indicador__valor">{{ compras.total|pesos }}</strong>
+        <span class="indicador__detalle">{% if not compras.cantidad %}Sin compras en el período.{% elif compras.pendiente %}{{ compras.pendiente|pesos }} pendiente de pago.{% else %}Todo pagado.{% endif %}</span>
+    </div>
+    <div class="indicador">
+        <span class="indicador__nombre">Gastos generales</span>
+        <strong class="indicador__valor">{{ gastos.total|pesos }}</strong>
+        <span class="indicador__detalle">{{ gastos.cantidad }} gasto{{ gastos.cantidad|pluralize }}. No incluye compras.</span>
+    </div>
+    <div class="indicador indicador--resultado">
+        <span class="indicador__nombre">Resultado preliminar</span>
+        <strong class="indicador__valor {% if resultado.resultado < 0 %}texto-salida{% endif %}">{{ resultado.resultado|pesos }}</strong>
+        <span class="indicador__detalle">Aproximado. Vea el detalle más abajo.</span>
+    </div>
+</section>
+
+<section class="seccion">
+    <h2 class="titulo-seccion">Ventas</h2>
+    <div class="rejilla-informe">
+        <div class="bloque">
+            <h3 class="bloque__titulo">Por método de pago</h3>
+            <table class="tabla-caja">
+                <tbody>
+                    {% for metodo in ventas.por_metodo %}
+                    <tr><td>{{ metodo.nombre }}</td><td class="numero">{{ metodo.total|pesos }}</td></tr>
+                    {% endfor %}
+                    <tr class="tabla-caja__total"><td>Total</td><td class="numero">{{ ventas.total|pesos }}</td></tr>
+                </tbody>
+            </table>
+            <p class="texto-suave">Venta promedio: {{ ventas.promedio|pesos }}.</p>
+        </div>
+
+        {% if por_dia %}
+        <div class="bloque">
+            <h3 class="bloque__titulo">Ventas por día</h3>
+            <div class="barras {% if por_dia|length > 7 %}barras--mes{% endif %}">
+                {% for dia in por_dia %}
+                <div class="barras__dia" title="{{ dia.fecha|date:'l j' }}: {{ dia.total|pesos }}">
+                    <span class="barras__valor">{% if por_dia|length <= 7 and dia.total %}{{ dia.total|pesos }}{% endif %}</span>
+                    <span class="barras__barra" style="height: {{ dia.porcentaje }}%"></span>
+                    <span class="barras__etiqueta">{% if por_dia|length <= 7 %}{{ dia.fecha|date:"D"|lower }}{% else %}{{ dia.fecha|date:"j" }}{% endif %}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="rejilla-informe">
+        <div class="bloque">
+            <h3 class="bloque__titulo">Productos vendidos por unidades</h3>
+            {% if vendidos %}
+            <table class="tabla-caja">
+                <tbody>
+                    {% for producto in vendidos|slice:":10" %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td class="numero">{{ producto.cantidad|cantidad }} und</td>
+                        <td class="numero">{{ producto.total|pesos }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="texto-suave">No hubo ventas por unidades en este período.</p>
+            {% endif %}
+        </div>
+
+        <div class="bloque">
+            <h3 class="bloque__titulo">Ventas por importe</h3>
+            {% if por_importe %}
+            <table class="tabla-caja">
+                <tbody>
+                    {% for producto in por_importe %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td class="numero">{% if producto.veces == 1 %}1 vez{% else %}{{ producto.veces }} veces{% endif %}</td>
+                        <td class="numero">{{ producto.total|pesos }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="texto-suave">En estas ventas no se cuentan unidades: solo el valor que pagó el cliente.</p>
+            {% else %}
+            <p class="texto-suave">No hubo ventas por importe en este período.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="seccion">
+    <h2 class="titulo-seccion">Flujo de caja</h2>
+    <p class="texto-suave">El dinero que realmente entró y salió en el período, por cualquier medio de pago.</p>
+    <div class="bloque bloque--angosto">
+        <table class="tabla-caja">
+            <tbody>
+                <tr><td>Ventas cobradas</td><td class="numero texto-entrada">+ {{ flujo.entradas.ventas|pesos }}</td></tr>
+                <tr><td>Otras entradas de dinero</td><td class="numero texto-entrada">+ {{ flujo.entradas.otras|pesos }}</td></tr>
+                <tr><td>Gastos pagados</td><td class="numero texto-salida">− {{ flujo.salidas.gastos|pesos }}</td></tr>
+                <tr><td>Compras pagadas</td><td class="numero texto-salida">− {{ flujo.salidas.compras|pesos }}</td></tr>
+                <tr><td>Otras salidas (retiros del dueño)</td><td class="numero texto-salida">− {{ flujo.salidas.otras|pesos }}</td></tr>
+                <tr class="tabla-caja__total"><td>Diferencia</td><td class="numero">{{ flujo.neto|pesos }}</td></tr>
+            </tbody>
+        </table>
+        {% if tipo == "diario" %}<p><a href="{% url 'gastos:caja' %}?fecha={{ desde|date:'Y-m-d' }}">Ver la caja en efectivo de este día</a></p>{% endif %}
+    </div>
+</section>
+
+<section class="seccion">
+    <h2 class="titulo-seccion">Resultado preliminar</h2>
+    <p class="texto-suave">Una aproximación de la ganancia. No es lo mismo que «ventas menos compras», porque parte de lo comprado sigue en la bodega.</p>
+    <div class="bloque bloque--angosto">
+        <table class="tabla-caja">
+            <tbody>
+                <tr><td>Ventas</td><td class="numero">{{ ventas.total|pesos }}</td></tr>
+                <tr><td>Costo de las bebidas y productos vendidos</td><td class="numero texto-salida">− {{ resultado.costo_reventa|pesos }}</td></tr>
+                <tr><td>Costo de los insumos usados en producción</td><td class="numero texto-salida">− {{ resultado.costo_insumos|pesos }}</td></tr>
+                <tr><td>Gastos generales</td><td class="numero texto-salida">− {{ gastos.total|pesos }}</td></tr>
+                <tr class="tabla-caja__total"><td>Resultado preliminar</td><td class="numero">{{ resultado.resultado|pesos }}</td></tr>
+            </tbody>
+        </table>
+        <p class="texto-suave">Los costos se calculan con el precio promedio pagado en las compras registradas.</p>
+    </div>
+    {% if resultado.faltantes %}
+    <div class="aviso aviso--alerta faltantes">
+        <p><strong>Este resultado puede no ser exacto porque falta información:</strong></p>
+        <ul>
+            {% for faltante in resultado.faltantes %}<li>{{ faltante }}</li>{% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</section>
+
+<section class="seccion">
+    <div class="rejilla-informe">
+        <div class="bloque">
+            <h2 class="titulo-seccion">Compras</h2>
+            <table class="tabla-caja">
+                <tbody>
+                    {% for tipo_compra in compras.por_tipo %}
+                    <tr><td>{{ tipo_compra.nombre }}</td><td class="numero">{{ tipo_compra.total|pesos }}</td></tr>
+                    {% endfor %}
+                    <tr class="tabla-caja__total"><td>Total</td><td class="numero">{{ compras.total|pesos }}</td></tr>
+                </tbody>
+            </table>
+            {% if compras.pendiente %}<p class="texto-suave">De este total, {{ compras.pendiente|pesos }} siguen pendientes de pago.</p>{% endif %}
+        </div>
+        <div class="bloque">
+            <h2 class="titulo-seccion">Gastos generales</h2>
+            {% if gastos.por_categoria %}
+            <table class="tabla-caja">
+                <tbody>
+                    {% for categoria in gastos.por_categoria %}
+                    <tr><td>{{ categoria.categoria__nombre }}</td><td class="numero">{{ categoria.total|pesos }}</td></tr>
+                    {% endfor %}
+                    <tr class="tabla-caja__total"><td>Total</td><td class="numero">{{ gastos.total|pesos }}</td></tr>
+                </tbody>
+            </table>
+            {% else %}
+            <p class="texto-suave">No hubo gastos en este período.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="seccion">
+    <div class="rejilla-informe">
+        <div class="bloque">
+            <h2 class="titulo-seccion">Producción</h2>
+            {% if produccion.por_nombre %}
+            <table class="tabla-caja">
+                <tbody>
+                    {% for fila in produccion.por_nombre %}
+                    <tr>
+                        <td>{{ fila.nombre }}</td>
+                        <td class="numero">{% if fila.veces == 1 %}1 vez{% else %}{{ fila.veces }} veces{% endif %}</td>
+                        <td class="numero">{% if fila.bandejas %}{{ fila.bandejas|cantidad }} bandejas{% endif %}{% if fila.unidades %}, ~{{ fila.unidades }} und{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="texto-suave">Las unidades son aproximadas y solo cuentan cuando el panadero las anotó.</p>
+            {% else %}
+            <p class="texto-suave">No se registró producción en este período.</p>
+            {% endif %}
+        </div>
+        <div class="bloque">
+            <h2 class="titulo-seccion">Movimientos de inventario</h2>
+            {% if inventario.por_tipo %}
+            <table class="tabla-caja">
+                <tbody>
+                    {% for fila in inventario.por_tipo %}
+                    <tr><td>{{ fila.nombre }}</td><td class="numero">{{ fila.cantidad }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if inventario.ajustes %}
+            <h3 class="bloque__titulo">Ajustes hechos a mano</h3>
+            <ul class="lista-ajustes">
+                {% for ajuste in inventario.ajustes %}
+                <li>{{ ajuste.articulo.nombre }}: {% if ajuste.cantidad > 0 %}+{% endif %}{{ ajuste.cantidad|cantidad }} {{ ajuste.unidad }}. {{ ajuste.motivo }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <p><a href="{% url 'inventario:movimientos' %}?desde={{ desde|date:'Y-m-d' }}&hasta={{ hasta|date:'Y-m-d' }}">Ver todos los movimientos</a></p>
+            {% else %}
+            <p class="texto-suave">No hubo movimientos de inventario en este período.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -21,7 +21,9 @@ if not SECRET_KEY:
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-NOMBRE_NEGOCIO = os.environ.get("NOMBRE_NEGOCIO", "Panadería")
+NOMBRE_NEGOCIO = "Rico Pan de Samuelito"
+
+VERSION_ESTILOS = "14"
 
 ALLOWED_HOSTS = leer_lista("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = leer_lista("CSRF_TRUSTED_ORIGINS")

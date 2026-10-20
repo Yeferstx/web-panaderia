@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Gasto{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">{{ gasto.descripcion }}</h1>
+        <p class="subtitulo">{{ gasto.fecha|date:"d/m/Y" }}, registrado por {{ gasto.usuario.get_full_name|default:gasto.usuario.username }}.</p>
+    </div>
+    <div class="encabezado__acciones">
+        <a href="{% url 'gastos:lista' %}" class="boton boton--secundario">Volver a gastos</a>
+    </div>
+</div>
+
+{% if gasto.esta_anulado %}
+<div class="aviso aviso--alerta estado-venta">
+    <p><strong>Gasto anulado</strong> el {{ gasto.fecha_anulacion|date:"d/m/Y h:i a" }}
+        por {{ gasto.anulado_por.get_full_name|default:gasto.anulado_por.username }}. Motivo: {{ gasto.motivo_anulacion }}</p>
+</div>
+{% endif %}
+
+<dl class="datos">
+    <div><dt>Valor</dt><dd><strong>{{ gasto.valor|pesos }}</strong></dd></div>
+    <div><dt>Categoría</dt><dd>{{ gasto.categoria.nombre }}</dd></div>
+    <div><dt>Método de pago</dt><dd>{{ gasto.get_metodo_pago_display }}</dd></div>
+    {% if gasto.observaciones %}<div><dt>Observaciones</dt><dd>{{ gasto.observaciones }}</dd></div>{% endif %}
+</dl>
+
+{% if formulario_anulacion %}
+<details class="anular">
+    <summary>Anular este gasto</summary>
+    <div class="panel-formulario">
+        <p class="nota">El gasto no se borra: queda marcado como anulado y deja de sumarse en los totales.</p>
+        <form method="post" action="{% url 'gastos:anular' gasto.pk %}" class="formulario" data-un-envio
+              data-confirmar="¿Anular el gasto «{{ gasto.descripcion }}» por {{ gasto.valor|pesos }}?">
+            {% csrf_token %}
+            {% for campo in formulario_anulacion %}{% include "componentes/campo.html" %}{% endfor %}
+            <div class="acciones-formulario">
+                <button type="submit" class="boton boton--peligro" data-texto-enviando="Anulando…">Anular gasto</button>
+            </div>
+        </form>
+    </div>
+</details>
+{% endif %}
+{% endblock %}

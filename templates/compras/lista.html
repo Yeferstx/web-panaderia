@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Compras{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">Compras</h1>
+        <p class="subtitulo">Del {{ desde|date:"j/m/Y" }} al {{ hasta|date:"j/m/Y" }}</p>
+    </div>
+    <div class="encabezado__acciones">
+        <a href="{% url 'compras:proveedores' %}" class="boton boton--secundario">Proveedores</a>
+        <a href="{% url 'compras:nueva' %}" class="boton boton--principal">Registrar compra</a>
+    </div>
+</div>
+
+{% if cantidad_pendientes %}
+<div class="aviso aviso--alerta">
+    <p>
+        {% if cantidad_pendientes == 1 %}Hay 1 compra pendiente de pago{% else %}Hay {{ cantidad_pendientes }} compras pendientes de pago{% endif %}
+        por {{ total_pendiente|pesos }}.
+        <a href="?estado_pago=pendiente&desde=2000-01-01">Ver pendientes</a>
+    </p>
+</div>
+{% endif %}
+
+<form method="get" class="filtros">
+    {% for campo in filtro %}
+    <div class="campo">
+        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {{ campo }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="boton boton--secundario">Filtrar</button>
+</form>
+
+<div class="resumen-ventas">
+    <div>
+        <span class="texto-suave">Total comprado en el período</span>
+        <strong>{{ total_compras|pesos|default:"$0" }}</strong>
+    </div>
+</div>
+
+{% if pagina.object_list %}
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Compra</th>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th class="numero">Total</th>
+            <th>Pago</th>
+            <th><span class="solo-lector">Acciones</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for compra in pagina.object_list %}
+        <tr class="{% if compra.esta_anulada %}fila--inactiva{% endif %}">
+            <td data-titulo="Compra"><strong>#{{ compra.pk }}</strong></td>
+            <td data-titulo="Fecha">{{ compra.fecha|date:"d/m/Y" }}</td>
+            <td data-titulo="Proveedor">{{ compra.proveedor.nombre|default:"Sin proveedor" }}</td>
+            <td data-titulo="Total" class="numero">{{ compra.total|pesos }}</td>
+            <td data-titulo="Pago">
+                {% if compra.esta_anulada %}<span class="etiqueta etiqueta--negativo">Anulada</span>
+                {% elif compra.esta_pendiente %}<span class="etiqueta etiqueta--bajo">Pendiente</span>
+                {% else %}<span class="etiqueta etiqueta--normal">Pagada</span>{% endif %}
+            </td>
+            <td class="acciones-fila">
+                <a href="{% url 'compras:detalle' compra.pk %}" class="boton boton--pequeno boton--secundario">Ver detalle</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if pagina.has_other_pages %}
+<nav class="paginacion" aria-label="Páginas">
+    {% if pagina.has_previous %}<a href="?{{ parametros }}&pagina={{ pagina.previous_page_number }}" class="boton boton--secundario boton--pequeno">Anterior</a>{% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a href="?{{ parametros }}&pagina={{ pagina.next_page_number }}" class="boton boton--secundario boton--pequeno">Siguiente</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<div class="vacio">
+    <p>No hay compras registradas en este período.</p>
+    <a href="{% url 'compras:nueva' %}" class="boton boton--principal">Registrar compra</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,18 +1,107 @@
 {% extends "base.html" %}
+{% load static formato %}
 
 {% block titulo %}Inicio{% endblock %}
 
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/reportes.css' %}?v={{ version_estilos }}">{% endblock %}
+
 {% block contenido %}
-<h1 class="titulo-pagina">Hola, {{ user.first_name|default:user.username }}</h1>
-<p class="subtitulo">Ingresó como {% if es_administrador %}administrador{% else %}empleado{% endif %}.</p>
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">Hola, {{ user.first_name|default:user.username }}</h1>
+        <p class="subtitulo">{{ hoy|date:"l j \d\e F"|lower }}</p>
+    </div>
+</div>
 
 <div class="accesos">
     <a href="{% url 'ventas:nueva' %}" class="boton boton--principal boton--grande">Registrar venta</a>
-    <a href="{% url 'ventas:lista' %}" class="boton boton--secundario boton--grande">{% if es_administrador %}Ver ventas{% else %}Mis ventas de hoy{% endif %}</a>
+    <a href="{% url 'produccion:nueva' %}" class="boton boton--secundario boton--grande">Registrar producción</a>
+    {% if es_administrador %}
+    <a href="{% url 'compras:nueva' %}" class="boton boton--secundario boton--grande">Registrar compra</a>
+    <a href="{% url 'gastos:nuevo' %}" class="boton boton--secundario boton--grande">Registrar gasto</a>
+    {% endif %}
 </div>
 
-<section class="aviso">
-    <h2 class="aviso__titulo">El sistema se está configurando</h2>
-    <p>Los módulos del menú marcados como «Próximamente» se activarán a medida que se terminen.</p>
+{% if es_administrador %}
+<section class="indicadores">
+    <a href="{% url 'ventas:lista' %}" class="indicador indicador--enlace">
+        <span class="indicador__nombre">Ventas de hoy</span>
+        <strong class="indicador__valor">{{ ventas_hoy.total|pesos }}</strong>
+        <span class="indicador__detalle">{{ ventas_hoy.cantidad }} venta{{ ventas_hoy.cantidad|pluralize }}</span>
+    </a>
+    <a href="{% url 'gastos:lista' %}" class="indicador indicador--enlace">
+        <span class="indicador__nombre">Gastos de hoy</span>
+        <strong class="indicador__valor">{{ gastos_hoy|pesos }}</strong>
+        <span class="indicador__detalle">Pagos generales, sin compras</span>
+    </a>
+    <a href="{% url 'compras:lista' %}" class="indicador indicador--enlace">
+        <span class="indicador__nombre">Compras del mes</span>
+        <strong class="indicador__valor">{{ compras_mes|pesos }}</strong>
+        <span class="indicador__detalle">
+            {% if pendientes_cantidad %}{{ pendientes_total|pesos }} pendiente{{ pendientes_cantidad|pluralize }} de pago{% else %}Sin compras pendientes{% endif %}
+        </span>
+    </a>
+    <a href="{% url 'inventario:panel' %}{% if alertas %}?alertas=1{% endif %}" class="indicador indicador--enlace {% if alertas %}indicador--alerta{% endif %}">
+        <span class="indicador__nombre">Inventario</span>
+        <strong class="indicador__valor">{% if alertas %}{{ alertas }} alerta{{ alertas|pluralize }}{% else %}En orden{% endif %}</strong>
+        <span class="indicador__detalle">{% if alertas %}Existencias bajas, en cero o en negativo{% else %}Ninguna existencia baja{% endif %}</span>
+    </a>
 </section>
+
+<div class="rejilla-informe">
+    <section class="bloque">
+        <div class="bloque__encabezado">
+            <h2 class="bloque__titulo">Esta semana</h2>
+            <a href="{% url 'reportes:informe' %}?tipo=semanal">Ver informe</a>
+        </div>
+        <p class="resumen-semana">
+            <strong>{{ semana_total|pesos }}</strong>
+            <span class="texto-suave">vendidos. La semana pasada: {{ semana_pasada_total|pesos }}.</span>
+        </p>
+        <div class="barras barras--pequenas">
+            {% for dia in semana_dias %}
+            <div class="barras__dia" title="{{ dia.fecha|date:'l j' }}: {{ dia.total|pesos }}">
+                <span class="barras__barra {% if dia.fecha == hoy %}barras__barra--hoy{% endif %}" style="height: {{ dia.porcentaje }}%"></span>
+                <span class="barras__etiqueta">{{ dia.fecha|date:"D"|lower }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="bloque">
+        <div class="bloque__encabezado">
+            <h2 class="bloque__titulo">Últimas ventas de hoy</h2>
+            <a href="{% url 'ventas:lista' %}">Ver todas</a>
+        </div>
+        {% if ultimas_ventas %}
+        <table class="tabla-caja">
+            <tbody>
+                {% for venta in ultimas_ventas %}
+                <tr>
+                    <td><a href="{% url 'ventas:detalle' venta.pk %}">#{{ venta.pk }}</a> <span class="texto-suave">{{ venta.fecha|date:"h:i a" }}</span></td>
+                    <td>{{ venta.get_metodo_pago_display }}</td>
+                    <td class="numero">{{ venta.total|pesos }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="texto-suave">Todavía no hay ventas hoy.</p>
+        {% endif %}
+    </section>
+</div>
+{% else %}
+<section class="indicadores">
+    <a href="{% url 'ventas:lista' %}" class="indicador indicador--enlace">
+        <span class="indicador__nombre">Mis ventas de hoy</span>
+        <strong class="indicador__valor">{{ mis_ventas_total|pesos }}</strong>
+        <span class="indicador__detalle">{{ mis_ventas_cantidad }} venta{{ mis_ventas_cantidad|pluralize }}</span>
+    </a>
+    <a href="{% url 'produccion:lista' %}" class="indicador indicador--enlace">
+        <span class="indicador__nombre">Producción de hoy</span>
+        <strong class="indicador__valor">{{ produccion_hoy }}</strong>
+        <span class="indicador__detalle">preparaci{{ produccion_hoy|pluralize:"ón,ones" }} registrada{{ produccion_hoy|pluralize }}</span>
+    </a>
+</section>
+{% endif %}
 {% endblock %}

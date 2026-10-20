@@ -1,7 +1,7 @@
 .venta {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: 24px;
 }
 
 .venta > * {
@@ -10,113 +10,122 @@
 
 .categorias {
     display: flex;
-    gap: 0.4rem;
+    gap: 8px;
     overflow-x: auto;
-    padding: 0.75rem 0;
+    padding: 12px 0 16px;
 }
 
 .categoria {
     flex: none;
-    min-height: 40px;
-    padding: 0 0.9rem;
-    border: 1px solid var(--linea);
+    min-height: 42px;
+    padding: 0 16px;
+    border: 2px solid var(--linea);
     border-radius: 999px;
-    background: var(--superficie);
-    color: var(--texto);
+    background: var(--papel);
+    color: var(--lapiz);
     font: inherit;
-    font-size: 0.95rem;
+    font-size: 15px;
+    font-weight: 800;
     cursor: pointer;
 }
 
 .categoria--activa {
-    background: var(--cafe-tostado);
-    border-color: var(--cafe-tostado);
-    color: #fff;
+    background: var(--acento-claro);
+    border-color: var(--acento);
+    color: var(--principal);
 }
 
 .productos-venta {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
 }
 
 .producto-venta {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.2rem;
-    min-height: 88px;
-    padding: 0.75rem;
-    border: 1px solid var(--linea);
-    border-radius: var(--radio);
-    background: var(--superficie);
-    color: var(--texto);
+    gap: 4px;
+    min-height: 96px;
+    padding: 14px;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-grande);
+    background: var(--papel);
+    color: var(--tinta);
     font: inherit;
     text-align: left;
     cursor: pointer;
 }
 
 .producto-venta:hover {
-    border-color: var(--corteza);
+    border-color: var(--gris);
+    background: var(--fondo-suave);
 }
 
 .producto-venta:active {
-    background: #f4f0ea;
+    border-color: var(--acento);
+    background: var(--acento-claro);
 }
 
 .producto-venta__nombre {
-    font-weight: 700;
-    line-height: 1.25;
+    font-weight: 800;
+    line-height: 1.2;
 }
 
 .producto-venta__precio {
-    color: var(--corteza);
-    font-weight: 700;
+    color: var(--principal);
+    font-size: 19px;
+    font-weight: 900;
 }
 
 .producto-venta__existencia {
-    font-size: 0.8rem;
-    color: var(--texto-suave);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gris);
 }
 
 .producto-venta--importe {
     border-style: dashed;
-    border-color: var(--corteza);
-    background: #fdf8ef;
+    border-color: var(--acento-fuerte);
+    background: var(--acento-claro);
 }
 
 .producto-venta--importe .producto-venta__precio {
-    font-weight: 400;
-    font-size: 0.9rem;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--principal);
 }
 
 .venta__carrito {
     align-self: start;
-    padding: 1.25rem;
-    background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-top: 4px solid var(--cafe-tostado);
-    border-radius: 12px;
+    padding: 24px;
+    background: var(--papel);
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-grande);
 }
 
 .panel-importe {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #fdf8ef;
-    border: 1px solid var(--mantequilla);
+    margin-bottom: 16px;
+    padding: 16px;
+    background: var(--acento-claro);
+    border: 2px solid var(--acento);
     border-radius: var(--radio);
 }
 
+.panel-importe .campo input {
+    background: var(--papel);
+}
+
 .panel-importe__titulo {
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-weight: 900;
+    margin-bottom: 8px;
 }
 
 .importes-rapidos {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.4rem;
-    margin: 0.75rem 0;
+    gap: 8px;
+    margin: 12px 0;
 }
 
 .lineas {
@@ -128,32 +137,35 @@
 .linea {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 0.35rem 0.75rem;
+    gap: 6px 12px;
     align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--linea);
+    padding: 14px 0;
+    border-bottom: 2px solid var(--linea);
 }
 
 .linea__nombre {
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .linea__detalle {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--texto-suave);
+    gap: 8px;
+    color: var(--lapiz);
+    font-weight: 700;
 }
 
 .linea__detalle .boton {
     min-width: 40px;
-    font-size: 1.1rem;
+    padding: 0;
+    font-size: 20px;
 }
 
 .linea__subtotal {
     grid-row: 1;
     grid-column: 2;
     text-align: right;
+    font-weight: 900;
 }
 
 .linea__quitar {
@@ -164,17 +176,19 @@
 .linea__aviso {
     grid-column: 1 / -1;
     margin: 0;
-    padding: 0.5rem 0.75rem;
-    background: var(--alerta-fondo);
-    border-left: 3px solid var(--alerta);
-    border-radius: 4px;
-    font-size: 0.9rem;
-    color: var(--alerta);
+    padding: 10px 14px;
+    background: var(--ambar-claro);
+    border: 2px solid var(--ambar-borde);
+    border-radius: var(--radio);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ambar);
 }
 
 .lineas__vacio {
-    color: var(--texto-suave);
-    padding: 1rem 0;
+    color: var(--gris);
+    font-weight: 700;
+    padding: 16px 0;
     margin: 0;
 }
 
@@ -182,26 +196,32 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 1rem 0;
+    padding: 16px 0;
+    font-weight: 800;
+    color: var(--lapiz);
 }
 
 .total strong {
-    font-size: 2rem;
-    color: var(--cafe-tostado);
+    font-family: var(--letra-titulos);
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--principal);
 }
 
 .metodos-pago {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.4rem;
-    margin: 0 0 1rem;
+    gap: 8px;
+    margin: 0 0 16px;
     padding: 0;
     border: none;
 }
 
 .metodos-pago legend {
-    margin-bottom: 0.4rem;
-    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 800;
 }
 
 .metodo {
@@ -217,40 +237,42 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
-    padding: 0 0.5rem;
-    border: 1px solid #cfc6bb;
+    min-height: 48px;
+    padding: 0 6px;
+    border: 2px solid var(--linea);
     border-radius: var(--radio);
-    font-size: 0.95rem;
+    color: var(--lapiz);
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
 }
 
 .metodo input:checked + span {
-    background: var(--cafe-tostado);
-    border-color: var(--cafe-tostado);
-    color: #fff;
-    font-weight: 700;
+    background: var(--acento-claro);
+    border-color: var(--acento);
+    color: var(--principal);
 }
 
 .metodo input:focus-visible + span {
-    outline: 3px solid var(--mantequilla);
+    outline: 3px solid var(--acento);
     outline-offset: 2px;
 }
 
 .observaciones {
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
 }
 
 .observaciones summary {
     cursor: pointer;
-    color: var(--corteza);
-    margin-bottom: 0.5rem;
+    color: var(--principal);
+    font-weight: 800;
+    margin-bottom: 8px;
 }
 
 .boton--guardar {
     min-height: 56px;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
 .barra-total {
@@ -262,31 +284,37 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.9rem 1rem;
-    background: var(--cafe-tostado);
-    color: #fff;
+    padding: 16px;
+    background: var(--principal);
+    color: var(--papel);
+    font-weight: 800;
     text-decoration: none;
 }
 
 .barra-total strong {
-    color: var(--mantequilla);
+    color: #ffe2cf;
+    font-weight: 900;
+}
+
+#carrito {
+    scroll-margin-top: 76px;
 }
 
 @media (max-width: 899px) {
     .contenido:has(.venta) {
-        padding-bottom: 5rem;
+        padding-bottom: 88px;
     }
 }
 
 @media (min-width: 900px) {
     .venta {
-        grid-template-columns: minmax(0, 1fr) 360px;
+        grid-template-columns: minmax(0, 1fr) 380px;
         align-items: start;
     }
 
     .venta__carrito {
         position: sticky;
-        top: 1.5rem;
+        top: 24px;
     }
 
     .barra-total {
@@ -297,12 +325,4 @@
 .tabla-detalle td.numero,
 .tabla-detalle th.numero {
     text-align: right;
-}
-
-.estado-venta {
-    margin-bottom: 1rem;
-}
-
-#carrito {
-    scroll-margin-top: 72px;
 }

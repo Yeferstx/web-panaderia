@@ -4,8 +4,8 @@ from .models import Venta
 
 
 class FiltroVentasForm(forms.Form):
-    desde = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
-    hasta = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    desde = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"))
+    hasta = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"))
     metodo_pago = forms.ChoiceField(
         label="Método de pago",
         required=False,
