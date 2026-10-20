@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Movimientos de inventario{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">Movimientos de inventario</h1>
+        {% if articulo %}<p class="subtitulo">{{ articulo.nombre }}, existencia actual: {{ articulo.existencia|cantidad }} {{ articulo.unidad_medida }}</p>{% endif %}
+    </div>
+    <div class="encabezado__acciones">
+        <a href="{% url 'inventario:panel' %}" class="boton boton--secundario">Volver al inventario</a>
+    </div>
+</div>
+
+<form method="get" class="filtros">
+    {% if articulo %}<input type="hidden" name="{{ tipo_articulo }}" value="{{ articulo.pk }}">{% endif %}
+    {% for campo in filtro %}
+    <div class="campo">
+        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {{ campo }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="boton boton--secundario">Filtrar</button>
+</form>
+
+{% if pagina.object_list %}
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Artículo</th>
+            <th>Tipo</th>
+            <th class="numero">Cantidad</th>
+            <th class="numero">Antes → después</th>
+            <th>Motivo</th>
+            <th>Usuario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for movimiento in pagina.object_list %}
+        <tr>
+            <td data-titulo="Fecha">{{ movimiento.fecha|date:"d/m/Y h:i a" }}</td>
+            <td data-titulo="Artículo">{{ movimiento.articulo.nombre }}</td>
+            <td data-titulo="Tipo">{{ movimiento.get_tipo_display }}</td>
+            <td data-titulo="Cantidad" class="numero {% if movimiento.cantidad > 0 %}texto-entrada{% else %}texto-salida{% endif %}">
+                {% if movimiento.cantidad > 0 %}+{% endif %}{{ movimiento.cantidad|cantidad }} {{ movimiento.unidad }}
+            </td>
+            <td data-titulo="Antes → después" class="numero">{{ movimiento.existencia_anterior|cantidad }} → {{ movimiento.existencia_resultante|cantidad }}</td>
+            <td data-titulo="Motivo">{{ movimiento.motivo }}</td>
+            <td data-titulo="Usuario">{{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if pagina.has_other_pages %}
+<nav class="paginacion" aria-label="Páginas">
+    {% if pagina.has_previous %}<a href="?{{ parametros }}&pagina={{ pagina.previous_page_number }}" class="boton boton--secundario boton--pequeno">Anterior</a>{% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a href="?{{ parametros }}&pagina={{ pagina.next_page_number }}" class="boton boton--secundario boton--pequeno">Siguiente</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<p class="vacio">No hay movimientos con esos filtros.</p>
+{% endif %}
+{% endblock %}

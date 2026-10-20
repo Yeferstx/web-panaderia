@@ -26,6 +26,10 @@
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 body {
     margin: 0;
     background: var(--fondo);
@@ -158,4 +162,83 @@ a {
     * {
         transition: none !important;
     }
+}
+
+.boton--pequeno {
+    min-height: 36px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.encabezado .titulo-pagina {
+    margin-bottom: 0;
+}
+
+.encabezado .subtitulo {
+    margin: 0.25rem 0 0;
+}
+
+.encabezado__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.seccion {
+    margin-bottom: 2.5rem;
+}
+
+.titulo-seccion {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.texto-suave {
+    color: var(--texto-suave);
+}
+
+.solo-lector {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.vacio {
+    padding: 1.5rem;
+    background: var(--superficie);
+    border: 1px dashed #cfc6bb;
+    border-radius: var(--radio);
+    text-align: center;
+    max-width: none;
+}
+
+.vacio p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mensaje p {
+    margin: 0;
+}
+
+.boton--peligro {
+    background: var(--error);
+    color: #fff;
+}
+
+.boton--grande {
+    min-height: 56px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
 }

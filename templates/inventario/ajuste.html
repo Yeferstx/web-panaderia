@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Ajustar {{ articulo.nombre }}{% endblock %}
+
+{% block contenido %}
+<h1 class="titulo-pagina">Ajustar existencia</h1>
+<p class="subtitulo">{{ articulo.nombre }}</p>
+
+<div class="panel-formulario">
+    <div class="dato-actual">
+        <span>Existencia registrada en el sistema</span>
+        <strong>{{ articulo.existencia|cantidad }} {{ articulo.unidad_medida }}</strong>
+    </div>
+
+    <p class="nota">Cuente lo que hay realmente y escríbalo. El sistema guarda la diferencia como un ajuste, con su motivo, sin borrar los movimientos anteriores.</p>
+
+    {% include "componentes/errores_formulario.html" %}
+
+    <form method="post" class="formulario" data-un-envio novalidate
+          data-confirmar="¿Guardar el ajuste de «{{ articulo.nombre }}»?">
+        {% csrf_token %}
+        {% for campo in formulario %}
+            {% include "componentes/campo.html" %}
+        {% endfor %}
+
+        <div class="acciones-formulario">
+            <button type="submit" class="boton boton--principal" data-texto-enviando="Guardando…">Guardar ajuste</button>
+            <a href="{% url 'inventario:panel' %}" class="boton boton--secundario">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -13,3 +13,85 @@
 .aviso p:last-child {
     margin-bottom: 0;
 }
+
+.aviso--alerta {
+    margin-bottom: 1.5rem;
+    border-left-color: var(--alerta);
+    background: var(--alerta-fondo);
+}
+
+.dato-actual {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1rem;
+    background: #f4f0ea;
+    border-radius: var(--radio);
+}
+
+.dato-actual strong {
+    font-size: 1.4rem;
+}
+
+.inactivos {
+    margin-top: 1rem;
+}
+
+.inactivos summary {
+    cursor: pointer;
+    color: var(--texto-suave);
+}
+
+.inactivos ul {
+    list-style: none;
+    padding: 0;
+}
+
+.inactivos li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 420px;
+    padding: 0.4rem 0;
+}
+
+.inactivos form {
+    margin: 0;
+}
+
+.resumen-ventas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 1rem 0 1.25rem;
+}
+
+.resumen-ventas div {
+    display: flex;
+    flex-direction: column;
+}
+
+.resumen-ventas strong {
+    font-size: 1.6rem;
+    color: var(--cafe-tostado);
+}
+
+.anular {
+    margin-top: 2rem;
+}
+
+.anular summary {
+    cursor: pointer;
+    color: var(--error);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.accesos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}

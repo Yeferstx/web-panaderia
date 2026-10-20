@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block titulo %}Categorías{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Categorías</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'productos:lista' %}" class="boton boton--secundario">Ver productos</a>
+        <a href="{% url 'productos:categoria_nueva' %}" class="boton boton--principal">Nueva categoría</a>
+    </div>
+</div>
+
+{% if categorias %}
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Categoría</th>
+            <th>Productos</th>
+            <th>Estado</th>
+            <th><span class="solo-lector">Acciones</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in categorias %}
+        <tr class="{% if not categoria.activa %}fila--inactiva{% endif %}">
+            <td data-titulo="Categoría">
+                <strong>{{ categoria.nombre }}</strong>
+                {% if categoria.descripcion %}<span class="texto-suave">{{ categoria.descripcion }}</span>{% endif %}
+            </td>
+            <td data-titulo="Productos" class="numero">{{ categoria.total_productos }}</td>
+            <td data-titulo="Estado">
+                {% if categoria.activa %}<span class="etiqueta etiqueta--normal">Activa</span>{% else %}<span class="etiqueta">Inactiva</span>{% endif %}
+            </td>
+            <td class="acciones-fila">
+                <a href="{% url 'productos:categoria_editar' categoria.pk %}" class="boton boton--pequeno boton--secundario">Editar</a>
+                <form method="post" action="{% url 'productos:categoria_estado' categoria.pk %}"
+                      data-confirmar="{% if categoria.activa %}¿Desactivar la categoría «{{ categoria.nombre }}»? No se podrá elegir para productos nuevos.{% else %}¿Activar la categoría «{{ categoria.nombre }}»?{% endif %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--pequeno boton--secundario">{% if categoria.activa %}Desactivar{% else %}Activar{% endif %}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="vacio">
+    <p>Todavía no hay categorías. Cree una para empezar a organizar los productos.</p>
+    <a href="{% url 'productos:categoria_nueva' %}" class="boton boton--principal">Crear categoría</a>
+</div>
+{% endif %}
+{% endblock %}

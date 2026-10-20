@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Inventario{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Inventario</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'inventario:movimientos' %}" class="boton boton--secundario">Ver movimientos</a>
+        <a href="{% url 'inventario:insumo_nuevo' %}" class="boton boton--principal">Nuevo insumo</a>
+    </div>
+</div>
+
+{% if total_alertas %}
+<div class="aviso aviso--alerta">
+    <p>
+        {% if total_alertas == 1 %}Hay 1 artículo{% else %}Hay {{ total_alertas }} artículos{% endif %}
+        con existencias bajas, en cero o en negativo.
+        {% if solo_alertas %}
+            <a href="{% url 'inventario:panel' %}">Ver todo el inventario</a>
+        {% else %}
+            <a href="{% url 'inventario:panel' %}?alertas=1">Ver solo esos</a>
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+<section class="seccion">
+    <h2 class="titulo-seccion">Productos para la venta</h2>
+    <p class="texto-suave">Bebidas y otros productos que se cuentan por unidades. Las ventas los descontarán y las compras los sumarán.</p>
+
+    {% if productos %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th class="numero">Existencia</th>
+                <th class="numero">Mínimo</th>
+                <th>Estado</th>
+                <th><span class="solo-lector">Acciones</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for articulo in productos %}
+            <tr>
+                <td data-titulo="Producto"><strong>{{ articulo.nombre }}</strong></td>
+                <td data-titulo="Existencia" class="numero">{{ articulo.existencia|cantidad }} {{ articulo.unidad_medida }}</td>
+                <td data-titulo="Mínimo" class="numero">{{ articulo.existencia_minima|cantidad }}</td>
+                <td data-titulo="Estado">{% include "componentes/estado_existencia.html" %}</td>
+                <td class="acciones-fila">
+                    <a href="{% url 'inventario:ajustar_producto' articulo.pk %}" class="boton boton--pequeno boton--secundario">Ajustar</a>
+                    <a href="{% url 'inventario:movimientos' %}?producto={{ articulo.pk }}" class="boton boton--pequeno boton--secundario">Historial</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif solo_alertas %}
+    <p class="vacio">Ningún producto tiene alertas.</p>
+    {% else %}
+    <div class="vacio">
+        <p>No hay productos que cuenten existencias. Edite un producto y elija «Contar existencias por unidades».</p>
+        <a href="{% url 'productos:lista' %}" class="boton boton--secundario">Ir a productos</a>
+    </div>
+    {% endif %}
+</section>
+
+<section class="seccion">
+    <h2 class="titulo-seccion">Insumos de producción</h2>
+    <p class="texto-suave">Harina, azúcar, huevos y demás ingredientes. Las compras los suman y el registro de producción los descuenta.</p>
+
+    {% if insumos %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Insumo</th>
+                <th class="numero">Existencia</th>
+                <th class="numero">Mínimo</th>
+                <th class="numero">Costo ref.</th>
+                <th>Estado</th>
+                <th><span class="solo-lector">Acciones</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for articulo in insumos %}
+            <tr>
+                <td data-titulo="Insumo"><strong>{{ articulo.nombre }}</strong></td>
+                <td data-titulo="Existencia" class="numero">{{ articulo.existencia|cantidad }} {{ articulo.unidad_medida }}</td>
+                <td data-titulo="Mínimo" class="numero">{{ articulo.existencia_minima|cantidad }} {{ articulo.unidad_medida }}</td>
+                <td data-titulo="Costo ref." class="numero">
+                    {% if articulo.costo_referencia %}{{ articulo.costo_referencia|pesos }} / {{ articulo.unidad_medida }}{% else %}<span class="texto-suave">Sin dato</span>{% endif %}
+                </td>
+                <td data-titulo="Estado">{% include "componentes/estado_existencia.html" %}</td>
+                <td class="acciones-fila">
+                    <a href="{% url 'inventario:ajustar_insumo' articulo.pk %}" class="boton boton--pequeno boton--secundario">Ajustar</a>
+                    <a href="{% url 'inventario:movimientos' %}?insumo={{ articulo.pk }}" class="boton boton--pequeno boton--secundario">Historial</a>
+                    <a href="{% url 'inventario:insumo_editar' articulo.pk %}" class="boton boton--pequeno boton--secundario">Editar</a>
+                    <form method="post" action="{% url 'inventario:insumo_estado' articulo.pk %}"
+                          data-confirmar="¿Desactivar «{{ articulo.nombre }}»? Su historial se conserva.">
+                        {% csrf_token %}
+                        <button type="submit" class="boton boton--pequeno boton--secundario">Desactivar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif solo_alertas %}
+    <p class="vacio">Ningún insumo tiene alertas.</p>
+    {% else %}
+    <div class="vacio">
+        <p>Todavía no hay insumos. Registre la harina, el azúcar y lo que use para hornear.</p>
+        <a href="{% url 'inventario:insumo_nuevo' %}" class="boton boton--principal">Registrar insumo</a>
+    </div>
+    {% endif %}
+
+    {% if insumos_inactivos %}
+    <details class="inactivos">
+        <summary>Insumos inactivos ({{ insumos_inactivos|length }})</summary>
+        <ul>
+            {% for insumo in insumos_inactivos %}
+            <li>
+                {{ insumo.nombre }}
+                <form method="post" action="{% url 'inventario:insumo_estado' insumo.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--pequeno boton--secundario">Activar</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </details>
+    {% endif %}
+</section>
+{% endblock %}

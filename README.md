@@ -58,6 +58,14 @@ Esto también crea los grupos **Administrador** y **Empleado**.
 python manage.py createsuperuser
 ```
 
+### 5.1 Cargar el catálogo de prueba (opcional)
+
+```powershell
+python manage.py cargar_catalogo_prueba
+```
+
+Crea 5 categorías y 22 productos con **precios de prueba**. Se puede ejecutar varias veces: no duplica productos ni cambia los precios que el administrador ya haya editado. No lo use si va a cargar los productos reales a mano.
+
 ### 6. Ejecutar el servidor
 
 ```powershell

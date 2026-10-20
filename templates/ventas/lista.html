@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Ventas{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <div>
+        <h1 class="titulo-pagina">{% if es_administrador %}Ventas{% else %}Mis ventas de hoy{% endif %}</h1>
+        <p class="subtitulo">
+            {% if desde == hasta %}{{ desde|date:"l j \d\e F \d\e Y" }}{% else %}Del {{ desde|date:"j/m/Y" }} al {{ hasta|date:"j/m/Y" }}{% endif %}
+        </p>
+    </div>
+    <div class="encabezado__acciones">
+        <a href="{% url 'ventas:nueva' %}" class="boton boton--principal">Registrar venta</a>
+    </div>
+</div>
+
+{% if es_administrador %}
+<form method="get" class="filtros">
+    {% for campo in filtro %}
+    <div class="campo">
+        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {{ campo }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="boton boton--secundario">Filtrar</button>
+</form>
+{% endif %}
+
+<div class="resumen-ventas">
+    <div>
+        <span class="texto-suave">Total vendido</span>
+        <strong>{{ resumen.total|default:0|pesos }}</strong>
+    </div>
+    <div>
+        <span class="texto-suave">Ventas confirmadas</span>
+        <strong>{{ resumen.cantidad }}</strong>
+    </div>
+</div>
+
+{% if pagina.object_list %}
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Venta</th>
+            <th>Hora</th>
+            {% if es_administrador %}<th>Registró</th>{% endif %}
+            <th>Pago</th>
+            <th class="numero">Total</th>
+            <th>Estado</th>
+            <th><span class="solo-lector">Acciones</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for venta in pagina.object_list %}
+        <tr class="{% if venta.esta_anulada %}fila--inactiva{% endif %}">
+            <td data-titulo="Venta"><strong>#{{ venta.pk }}</strong></td>
+            <td data-titulo="Hora">{% if desde != hasta %}{{ venta.fecha|date:"d/m/Y" }} {% endif %}{{ venta.fecha|date:"h:i a" }}</td>
+            {% if es_administrador %}<td data-titulo="Registró">{{ venta.usuario.get_full_name|default:venta.usuario.username }}</td>{% endif %}
+            <td data-titulo="Pago">{{ venta.get_metodo_pago_display }}</td>
+            <td data-titulo="Total" class="numero">{{ venta.total|pesos }}</td>
+            <td data-titulo="Estado">
+                {% if venta.esta_anulada %}<span class="etiqueta etiqueta--negativo">Anulada</span>{% else %}<span class="etiqueta etiqueta--normal">Confirmada</span>{% endif %}
+            </td>
+            <td class="acciones-fila">
+                <a href="{% url 'ventas:detalle' venta.pk %}" class="boton boton--pequeno boton--secundario">Ver detalle</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if pagina.has_other_pages %}
+<nav class="paginacion" aria-label="Páginas">
+    {% if pagina.has_previous %}<a href="?{{ parametros }}&pagina={{ pagina.previous_page_number }}" class="boton boton--secundario boton--pequeno">Anterior</a>{% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a href="?{{ parametros }}&pagina={{ pagina.next_page_number }}" class="boton boton--secundario boton--pequeno">Siguiente</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<div class="vacio">
+    <p>No hay ventas registradas en este período.</p>
+    <a href="{% url 'ventas:nueva' %}" class="boton boton--principal">Registrar venta</a>
+</div>
+{% endif %}
+{% endblock %}

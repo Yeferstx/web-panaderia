@@ -1,0 +1,7 @@
+{% if formulario.non_field_errors %}
+<div class="mensaje mensaje--error" role="alert">
+    {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+</div>
+{% elif formulario.errors %}
+<p class="mensaje mensaje--error" role="alert">Revise los campos marcados en rojo.</p>
+{% endif %}

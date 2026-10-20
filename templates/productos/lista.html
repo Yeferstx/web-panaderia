@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Productos</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'productos:categorias' %}" class="boton boton--secundario">Categorías</a>
+        <a href="{% url 'productos:nuevo' %}" class="boton boton--principal">Nuevo producto</a>
+    </div>
+</div>
+
+<form method="get" class="filtros">
+    <div class="campo">
+        <label for="buscar">Buscar</label>
+        <input type="search" id="buscar" name="buscar" value="{{ buscar }}" placeholder="Nombre del producto">
+    </div>
+    <div class="campo">
+        <label for="categoria">Categoría</label>
+        <select id="categoria" name="categoria">
+            <option value="">Todas</option>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.pk }}" {% if categoria_id == categoria.pk|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="campo">
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado">
+            <option value="activos" {% if estado == "activos" %}selected{% endif %}>Activos</option>
+            <option value="inactivos" {% if estado == "inactivos" %}selected{% endif %}>Inactivos</option>
+            <option value="todos" {% if estado == "todos" %}selected{% endif %}>Todos</option>
+        </select>
+    </div>
+    <button type="submit" class="boton boton--secundario">Filtrar</button>
+</form>
+
+{% if productos %}
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Inventario</th>
+            <th>Estado</th>
+            <th><span class="solo-lector">Acciones</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr class="{% if not producto.activo %}fila--inactiva{% endif %}">
+            <td data-titulo="Producto">
+                <strong>{{ producto.nombre }}</strong>
+                <span class="texto-suave">{{ producto.categoria.nombre }}</span>
+            </td>
+            <td data-titulo="Precio" class="numero">
+                {% if producto.forma_venta == "importe" %}Por importe{% else %}{{ producto.precio_venta|pesos }}{% endif %}
+            </td>
+            <td data-titulo="Inventario">
+                {% if producto.lleva_existencias %}
+                    {{ producto.existencia|cantidad }} {{ producto.unidad_medida }}
+                {% elif producto.control_inventario == "produccion" %}
+                    <span class="texto-suave">Producción aprox.</span>
+                {% else %}
+                    <span class="texto-suave">Sin control</span>
+                {% endif %}
+            </td>
+            <td data-titulo="Estado">
+                {% if producto.activo %}<span class="etiqueta etiqueta--normal">Activo</span>{% else %}<span class="etiqueta">Inactivo</span>{% endif %}
+            </td>
+            <td class="acciones-fila">
+                <a href="{% url 'productos:editar' producto.pk %}" class="boton boton--pequeno boton--secundario">Editar</a>
+                <form method="post" action="{% url 'productos:estado' producto.pk %}"
+                      data-confirmar="{% if producto.activo %}¿Desactivar «{{ producto.nombre }}»? Dejará de aparecer en ventas, pero su historial se conserva.{% else %}¿Activar «{{ producto.nombre }}» otra vez?{% endif %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--pequeno boton--secundario">{% if producto.activo %}Desactivar{% else %}Activar{% endif %}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="vacio">
+    <p>No hay productos con esos filtros.</p>
+    <a href="{% url 'productos:nuevo' %}" class="boton boton--principal">Crear un producto</a>
+</div>
+{% endif %}
+{% endblock %}

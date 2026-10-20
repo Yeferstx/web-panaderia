@@ -66,3 +66,63 @@
 .ingreso__texto {
     color: var(--texto-suave);
 }
+
+.campo__opcional {
+    font-weight: 400;
+    color: var(--texto-suave);
+}
+
+.campo__ayuda {
+    color: var(--texto-suave);
+    font-size: 0.875rem;
+}
+
+.campo textarea {
+    min-height: 0;
+    resize: vertical;
+}
+
+.campo--oculto {
+    display: none;
+}
+
+.panel-formulario {
+    max-width: 560px;
+    padding: 1.5rem;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: 12px;
+}
+
+.nota {
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--mantequilla);
+    color: var(--texto-suave);
+}
+
+.acciones-formulario {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio);
+}
+
+.filtros .campo {
+    flex: 1 1 160px;
+}
+
+.filtros label {
+    font-size: 0.875rem;
+}

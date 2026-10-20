@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Registrar venta{% endblock %}
+
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/ventas.css' %}">{% endblock %}
+
+{% block contenido %}
+<div class="encabezado">
+    <h1 class="titulo-pagina">Registrar venta</h1>
+    <div class="encabezado__acciones">
+        <a href="{% url 'ventas:lista' %}" class="boton boton--secundario">Ventas de hoy</a>
+    </div>
+</div>
+
+{% if error %}<p class="mensaje mensaje--error" role="alert">{{ error }}</p>{% endif %}
+
+<div class="venta">
+    <section class="venta__catalogo" aria-label="Productos">
+        <div class="campo">
+            <label for="buscar-producto">Buscar producto</label>
+            <input type="search" id="buscar-producto" placeholder="Escriba parte del nombre" autocomplete="off">
+        </div>
+
+        <div class="categorias" role="group" aria-label="Filtrar por categoría">
+            <button type="button" class="categoria categoria--activa" data-categoria="">Todas</button>
+            {% for categoria in categorias %}
+            <button type="button" class="categoria" data-categoria="{{ categoria.pk }}">{{ categoria.nombre }}</button>
+            {% endfor %}
+        </div>
+
+        <div class="productos-venta" id="productos-venta"></div>
+        <p class="vacio" id="sin-resultados" hidden>No hay productos con ese nombre.</p>
+    </section>
+
+    <aside class="venta__carrito" id="carrito" aria-label="Venta actual">
+        <h2 class="titulo-seccion">Venta actual</h2>
+
+        <div class="panel-importe" id="panel-importe" hidden>
+            <p class="panel-importe__titulo" id="importe-nombre"></p>
+            <div class="campo">
+                <label for="importe-valor">¿Cuánto paga el cliente?</label>
+                <input type="text" id="importe-valor" inputmode="numeric" placeholder="Ej: 5000" autocomplete="off">
+            </div>
+            <div class="importes-rapidos">
+                <button type="button" class="boton boton--secundario boton--pequeno" data-importe="1000">$1.000</button>
+                <button type="button" class="boton boton--secundario boton--pequeno" data-importe="2000">$2.000</button>
+                <button type="button" class="boton boton--secundario boton--pequeno" data-importe="5000">$5.000</button>
+                <button type="button" class="boton boton--secundario boton--pequeno" data-importe="10000">$10.000</button>
+            </div>
+            <p class="campo__error" id="importe-error" hidden></p>
+            <div class="acciones-formulario">
+                <button type="button" class="boton boton--principal" id="importe-agregar">Agregar</button>
+                <button type="button" class="boton boton--secundario" id="importe-cancelar">Cancelar</button>
+            </div>
+        </div>
+
+        <ul class="lineas" id="lineas"></ul>
+        <p class="lineas__vacio" id="lineas-vacio">Toque un producto para agregarlo.</p>
+
+        <div class="total">
+            <span>Total</span>
+            <strong id="total">$0</strong>
+        </div>
+
+        <form method="post" id="formulario-venta" data-un-envio>
+            {% csrf_token %}
+            <input type="hidden" name="lineas" id="campo-lineas">
+            <input type="hidden" name="codigo_operacion" value="{{ codigo_operacion }}">
+
+            <fieldset class="metodos-pago">
+                <legend>Método de pago</legend>
+                {% for valor, nombre in metodos_pago %}
+                <label class="metodo">
+                    <input type="radio" name="metodo_pago" value="{{ valor }}" {% if valor == metodo_pago %}checked{% endif %}>
+                    <span>{{ nombre }}</span>
+                </label>
+                {% endfor %}
+            </fieldset>
+
+            <details class="observaciones" {% if observaciones %}open{% endif %}>
+                <summary>Agregar una nota</summary>
+                <div class="campo">
+                    <label for="observaciones">Nota</label>
+                    <input type="text" id="observaciones" name="observaciones" maxlength="255" value="{{ observaciones }}">
+                </div>
+            </details>
+
+            <button type="submit" class="boton boton--principal boton--ancho boton--guardar" id="boton-guardar"
+                    data-texto-enviando="Guardando…" disabled>Guardar venta</button>
+            <button type="button" class="boton boton--secundario boton--ancho" id="boton-vaciar" hidden>Vaciar venta</button>
+        </form>
+    </aside>
+</div>
+
+<a href="#carrito" class="barra-total" id="barra-total" hidden>
+    <span id="barra-total-texto"></span>
+    <strong>Ver venta</strong>
+</a>
+
+{{ productos|json_script:"datos-productos" }}
+{{ lineas_enviadas|json_script:"datos-lineas" }}
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/ventas.js' %}"></script>{% endblock %}

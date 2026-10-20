@@ -1,4 +1,4 @@
-{% with actual=request.resolver_match.url_name %}
+{% with actual=request.resolver_match.url_name seccion=request.resolver_match.app_name %}
 <header class="barra-superior">
     <button type="button" class="boton-menu" id="boton-menu" aria-expanded="false" aria-controls="menu-lateral">Menú</button>
     <span class="barra-superior__nombre">{{ nombre_negocio }}</span>
@@ -9,11 +9,11 @@
 
     <ul class="menu__lista">
         <li><a href="{% url 'inicio' %}" class="menu__enlace {% if actual == 'inicio' %}menu__enlace--activo{% endif %}">Inicio</a></li>
-        <li><span class="menu__enlace menu__enlace--pendiente">Ventas <small>Próximamente</small></span></li>
+        <li><a href="{% url 'ventas:nueva' %}" class="menu__enlace {% if seccion == 'ventas' %}menu__enlace--activo{% endif %}">Ventas</a></li>
         <li><span class="menu__enlace menu__enlace--pendiente">Producción <small>Próximamente</small></span></li>
         {% if es_administrador %}
-        <li><span class="menu__enlace menu__enlace--pendiente">Productos <small>Próximamente</small></span></li>
-        <li><span class="menu__enlace menu__enlace--pendiente">Inventario <small>Próximamente</small></span></li>
+        <li><a href="{% url 'productos:lista' %}" class="menu__enlace {% if seccion == 'productos' %}menu__enlace--activo{% endif %}">Productos</a></li>
+        <li><a href="{% url 'inventario:panel' %}" class="menu__enlace {% if seccion == 'inventario' %}menu__enlace--activo{% endif %}">Inventario</a></li>
         <li><span class="menu__enlace menu__enlace--pendiente">Compras <small>Próximamente</small></span></li>
         <li><span class="menu__enlace menu__enlace--pendiente">Gastos y caja <small>Próximamente</small></span></li>
         <li><span class="menu__enlace menu__enlace--pendiente">Informes <small>Próximamente</small></span></li>

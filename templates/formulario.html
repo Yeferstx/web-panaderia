@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<h1 class="titulo-pagina">{{ titulo }}</h1>
+
+<div class="panel-formulario">
+    {% if nota %}<p class="nota">{{ nota }}</p>{% endif %}
+    {% include "componentes/errores_formulario.html" %}
+
+    <form method="post" class="formulario" data-un-envio novalidate>
+        {% csrf_token %}
+        {% for campo in formulario %}
+            {% include "componentes/campo.html" %}
+        {% endfor %}
+
+        <div class="acciones-formulario">
+            <button type="submit" class="boton boton--principal" data-texto-enviando="Guardando…">Guardar</button>
+            <a href="{% url volver %}" class="boton boton--secundario">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if script %}<script src="{% static script %}"></script>{% endif %}
+{% endblock %}

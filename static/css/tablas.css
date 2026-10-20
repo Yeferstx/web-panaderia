@@ -1,0 +1,152 @@
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio);
+    overflow: hidden;
+}
+
+.tabla th,
+.tabla td {
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--linea);
+}
+
+.tabla th {
+    background: #f4f0ea;
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+}
+
+.tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla td strong {
+    display: block;
+}
+
+.tabla .numero {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.fila--inactiva {
+    color: var(--texto-suave);
+}
+
+.acciones-fila {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+}
+
+.acciones-fila form {
+    margin: 0;
+}
+
+.etiqueta {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: #efebe6;
+    color: var(--texto-suave);
+    white-space: nowrap;
+}
+
+.etiqueta--normal {
+    background: var(--exito-fondo);
+    color: var(--exito);
+}
+
+.etiqueta--bajo {
+    background: var(--alerta-fondo);
+    color: var(--alerta);
+}
+
+.etiqueta--agotado,
+.etiqueta--negativo {
+    background: var(--error-fondo);
+    color: var(--error);
+}
+
+.texto-entrada {
+    color: var(--exito);
+    font-weight: 700;
+}
+
+.texto-salida {
+    color: var(--error);
+    font-weight: 700;
+}
+
+.paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 699px) {
+    .tabla,
+    .tabla tbody,
+    .tabla tr,
+    .tabla td {
+        display: block;
+    }
+
+    .tabla {
+        border: none;
+        background: transparent;
+    }
+
+    .tabla thead {
+        display: none;
+    }
+
+    .tabla tr {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem 0.9rem;
+        background: var(--superficie);
+        border: 1px solid var(--linea);
+        border-radius: var(--radio);
+    }
+
+    .tabla td {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.4rem 0;
+        border-bottom: none;
+        text-align: right;
+    }
+
+    .tabla td[data-titulo]::before {
+        content: attr(data-titulo);
+        color: var(--texto-suave);
+        font-size: 0.875rem;
+        text-align: left;
+    }
+
+    .tabla td:first-child {
+        display: block;
+        text-align: left;
+        padding-top: 0.25rem;
+    }
+
+    .tabla td:first-child::before {
+        content: none;
+    }
+
+    .acciones-fila {
+        justify-content: flex-start;
+        padding-top: 0.6rem !important;
+    }
+}

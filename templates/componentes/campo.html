@@ -1,0 +1,8 @@
+<div class="campo" id="campo-{{ campo.name }}">
+    <label for="{{ campo.id_for_label }}">
+        {{ campo.label }}{% if not campo.field.required and not campo.field.sin_opcional %} <span class="campo__opcional">(opcional)</span>{% endif %}
+    </label>
+    {{ campo }}
+    {% if campo.help_text %}<small class="campo__ayuda">{{ campo.help_text }}</small>{% endif %}
+    {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+</div>

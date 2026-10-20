@@ -1,0 +1,9 @@
+{% if articulo.estado_existencia == "negativo" %}
+<span class="etiqueta etiqueta--negativo">Negativo, revisar</span>
+{% elif articulo.estado_existencia == "agotado" %}
+<span class="etiqueta etiqueta--agotado">Sin existencias</span>
+{% elif articulo.estado_existencia == "bajo" %}
+<span class="etiqueta etiqueta--bajo">Bajo</span>
+{% else %}
+<span class="etiqueta etiqueta--normal">Normal</span>
+{% endif %}
