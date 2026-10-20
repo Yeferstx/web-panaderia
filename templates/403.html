@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block titulo %}Sin permiso{% endblock %}
+
+{% block contenido %}
+<h1 class="titulo-pagina">No tiene permiso para ver esta página</h1>
+<p class="subtitulo">Esta opción es solo para el administrador. Si la necesita, pídale acceso al dueño de la panadería.</p>
+<a href="{% url 'inicio' %}" class="boton boton--secundario">Volver al inicio</a>
+{% endblock %}

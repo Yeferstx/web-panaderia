@@ -1,0 +1,42 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ingresar · {{ nombre_negocio }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+</head>
+<body class="pagina-ingreso">
+    <main class="ingreso">
+        <h1 class="ingreso__negocio">{{ nombre_negocio }}</h1>
+        <p class="ingreso__texto">Ingrese con su usuario para registrar las cuentas del día.</p>
+
+        {% if form.non_field_errors %}
+        <p class="mensaje mensaje--error" role="alert">Usuario o contraseña incorrectos. Revise los datos e intente de nuevo.</p>
+        {% endif %}
+
+        <form method="post" class="formulario" data-un-envio>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <div class="campo">
+                <label for="id_username">Usuario</label>
+                <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" autocomplete="username" autocapitalize="none" required autofocus>
+            </div>
+
+            <div class="campo">
+                <label for="id_password">Contraseña</label>
+                <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+            </div>
+
+            <button type="submit" class="boton boton--principal boton--ancho" data-texto-enviando="Ingresando…">Ingresar</button>
+        </form>
+    </main>
+
+    <script src="{% static 'js/formularios.js' %}"></script>
+</body>
+</html>

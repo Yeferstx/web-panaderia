@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block titulo %}Inicio{% endblock %}
+
+{% block contenido %}
+<h1 class="titulo-pagina">Hola, {{ user.first_name|default:user.username }}</h1>
+<p class="subtitulo">Ingresó como {% if es_administrador %}administrador{% else %}empleado{% endif %}.</p>
+
+<section class="aviso">
+    <h2 class="aviso__titulo">El sistema se está configurando</h2>
+    <p>Los módulos del menú marcados como «Próximamente» se activarán a medida que se terminen. Por ahora puede ingresar y cerrar sesión con seguridad.</p>
+</section>
+{% endblock %}

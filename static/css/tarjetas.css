@@ -1,0 +1,15 @@
+.aviso {
+    padding: 1.25rem 1.5rem;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-left: 4px solid var(--mantequilla);
+    border-radius: var(--radio);
+}
+
+.aviso__titulo {
+    font-size: 1.1rem;
+}
+
+.aviso p:last-child {
+    margin-bottom: 0;
+}
